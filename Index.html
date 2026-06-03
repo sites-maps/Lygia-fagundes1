@@ -1,1 +1,4635 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SUSSURRO | Venha Ver o Pôr do Sol [VERSÃO INTEGRAL - CINE CUT]</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&family=Cormorant+Garamond:ital,wght=1,500;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-pure: #020204;
+            --accent-purple: #a855f7;
+            --accent-purple-bright: #d8b4fe;
+            --accent-purple-dark: #6b21a8;
+            --accent-purple-glow: rgba(168, 85, 247, 0.5);
+            --window-border: #6b21a8;
+            --window-bg: rgba(6, 4, 14, 0.97);
+            --neon-blue: #00f0ff;
+            --panic-red: #f43f5e;
+            --terminal-green: #10b981;
+            --gamma-multiplier: 1.0;
+            --accent-orange: #ff7e33; 
+            --ui-bg: rgba(0, 0, 0, 0.9);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            background: #000; 
+            color: #fff;
+            font-family: 'VT323', monospace; 
+            width: 100%; 
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            touch-action: none;
+        }
+
+        /* CONTAINER MASTER DO PROJETO */
+        #viewport-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* --- MENU DE ENTRADA DO JOGO --- */
+        #menu {
+            position: absolute; 
+            inset: 0; 
+            z-index: 5000; 
+            background: #000;
+            background-image: url('https://i.imgur.com/pPCyWF6.gif'); 
+            background-size: cover; 
+            background-position: center;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            transition: opacity 1.5s ease-in-out;
+            overflow: hidden;
+        }
+        /* Vinheta cinematográfica sobre o menu */
+        #menu::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0) 38%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.9) 100%);
+            z-index: 1;
+        }
+        /* Grão de filme animado */
+        #menu-grain {
+            position: absolute;
+            inset: -50%;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            opacity: 0.07;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grainShift 0.5s steps(3) infinite;
+        }
+        @keyframes grainShift {
+            0% { transform: translate(0,0); }
+            33% { transform: translate(-6px, 4px); }
+            66% { transform: translate(5px, -5px); }
+            100% { transform: translate(0,0); }
+        }
+        /* Linhas de varredura sutis */
+        #menu-scanlines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+            opacity: 0.4;
+        }
+        .menu-content {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: menuRise 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes menuRise {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .menu-quote {
+            font-family: 'Cormorant Garamond';
+            font-style: italic;
+            font-size: 19px;
+            color: rgba(255, 220, 190, 0.78);
+            margin-top: 34px;
+            max-width: 80%;
+            text-align: center;
+            text-shadow: 0 2px 6px #000;
+            min-height: 26px;
+            transition: opacity 1.1s ease;
+            letter-spacing: 0.5px;
+        }
+        .menu-credit {
+            position: absolute;
+            bottom: 18px;
+            left: 0; right: 0;
+            text-align: center;
+            font-family: 'VT323';
+            font-size: 15px;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.35);
+            z-index: 3;
+        }
+        .menu-title { 
+            font-family: 'Special Elite'; 
+            font-size: clamp(35px, 7vw, 75px); 
+            animation: glitch 0.4s infinite; 
+            color: var(--accent-orange); 
+            text-shadow: 0 0 15px rgba(255,126,51,0.5); 
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .menu-sub {
+            font-family: 'Cormorant Garamond';
+            font-size: 22px;
+            font-style: italic;
+            color: #ccc;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px #000;
+        }
+        @keyframes glitch { 
+            0% { transform: translate(0); } 
+            20% { transform: translate(-3px, 2px); } 
+            40% { transform: translate(3px, -2px); opacity: 0.7; } 
+            100% { transform: translate(0); } 
+        }
+
+        .btn-menu-start {
+            background: none; 
+            border: 2px solid #fff; 
+            color: #fff; 
+            padding: 12px 45px; 
+            font-size: 26px; 
+            font-family: 'VT323'; 
+            cursor: pointer; 
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255,126,51,0.1);
+        }
+        .btn-menu-start:hover {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+            color: #000;
+            box-shadow: 0 0 25px rgba(255,126,51,0.4);
+            transform: scale(1.05);
+        }
+
+        /* --- PARTE 1: CANVAS DO CASARÃO --- */
+        #part1-wrapper {
+            position: absolute;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        #game-scaler {
+            position: relative;
+            width: 960px;
+            height: 560px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center center;
+            transition: transform 0.15s ease-out;
+            flex-shrink: 0;
+        }
+
+        #engineCanvas { 
+            display: block;
+            width: 960px;
+            height: 560px;
+            background: #020205;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.98);
+        }
+
+        /* HUD & UI - PURPLE THEME */
+        .game-hud {
+            position: absolute;
+            font-family: 'VT323', monospace;
+            z-index: 20;
+            opacity: 0;
+            animation: fadeInHUD 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s;
+        }
+
+        @keyframes fadeInHUD { to { opacity: 1; } }
+
+        /* TAREFAS POPUP */
+        #task-panel {
+            position: absolute;
+            z-index: 100;
+            top: 75px;
+            left: 20px;
+            background: var(--window-bg);
+            border: 2px solid var(--window-border);
+            padding: 16px;
+            width: 340px;
+            max-height: 440px;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.98);
+            backdrop-filter: blur(16px);
+            border-radius: 4px;
+            opacity: 0;
+            transform: translateY(-15px);
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #task-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .hud-hdr { 
+            font-family: 'Special Elite'; 
+            font-size: 14px; 
+            margin-bottom: 10px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            padding-bottom: 6px;
+        }
+        .hdr-task { color: #f5f3ff; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
+
+        .task-row { 
+            font-size: 19px; 
+            color: #cbd5e1; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin: 8px 0; 
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+        .task-complete { 
+            text-decoration: line-through; 
+            color: #4b5563; 
+            transform: translateX(10px); 
+        }
+        .bullet { 
+            width: 14px; 
+            height: 14px; 
+            border: 2px solid #a78bfa; 
+            display: inline-block; 
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .task-complete .bullet { 
+            background: var(--accent-purple); 
+            border-color: var(--accent-purple-bright); 
+            box-shadow: 0 0 15px var(--accent-purple-glow);
+        }
+
+        /* MEDIDOR DE TENSÃO / PULSAÇÃO (NOVO HUD) */
+        #tension-hud {
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 230px;
+            z-index: 60;
+            opacity: 0;
+            animation: fadeInHUD 1s ease forwards 0.8s;
+            pointer-events: none;
+            font-family: 'Special Elite';
+        }
+        #tension-hud .tension-label {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: rgba(216, 180, 254, 0.65);
+            text-align: center;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+        #tension-hud .heart-icon {
+            display: inline-block;
+            width: 9px; height: 9px;
+            background: #a855f7;
+            transform: rotate(45deg);
+            position: relative;
+            box-shadow: 0 0 6px rgba(168,85,247,0.7);
+        }
+        #tension-hud .heart-icon::before,
+        #tension-hud .heart-icon::after {
+            content: ''; position: absolute; width: 9px; height: 9px; background: #a855f7; border-radius: 50%;
+        }
+        #tension-hud .heart-icon::before { top: -4.5px; left: 0; }
+        #tension-hud .heart-icon::after { top: 0; left: -4.5px; }
+        #tension-track {
+            height: 8px;
+            background: rgba(4, 2, 12, 0.85);
+            border: 1.5px solid rgba(168, 85, 247, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.7);
+        }
+        #tension-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6b21a8, #a855f7, #d8b4fe);
+            transition: width 0.18s linear, background 0.4s ease;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
+        }
+
+        /* BRANDING FOOTER */
+        #cine-badge {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-family: 'Special Elite';
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 3px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* TAREFAS TRIGGER BUTTON */
+        #tasks-trigger-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(8, 4, 18, 0.85);
+            border: 2px solid var(--accent-purple);
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Special Elite';
+            font-size: 12px;
+            padding: 10px 18px;
+            cursor: pointer;
+            z-index: 201;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 1.5px;
+        }
+        #tasks-trigger-btn:hover {
+            background: var(--accent-purple-dark);
+            border-color: var(--accent-purple-bright);
+            box-shadow: 0 0 15px var(--accent-purple-glow);
+            transform: scale(1.05);
+        }
+
+        /* PAUSE / CONFIG MENU SYSTEM */
+        #pause-trigger-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(8, 4, 18, 0.85);
+            border: 2px solid var(--accent-purple);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 201;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #pause-trigger-btn:hover {
+            transform: scale(1.1) rotate(45deg);
+            background: var(--accent-purple-dark);
+            border-color: var(--accent-purple-bright);
+            box-shadow: 0 0 15px var(--accent-purple-glow);
+        }
+        #pause-trigger-btn svg {
+            fill: #fff;
+            width: 22px;
+            height: 22px;
+        }
+
+        /* PUZZLE DIALOGS / PIN LOCK OVERLAYS */
+        #safe-input-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(2, 1, 5, 0.95);
+            z-index: 4000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'Special Elite', monospace;
+        }
+        .safe-lock-box {
+            background: #110e16;
+            border: 3px double var(--accent-purple);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            max-width: 320px;
+            width: 90%;
+        }
+        .safe-display {
+            background: #000;
+            color: var(--panic-red);
+            font-size: 36px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-purple-dark);
+            letter-spacing: 10px;
+            text-shadow: 0 0 10px var(--panic-red);
+        }
+        .safe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .safe-btn {
+            background: #201a2b;
+            color: #fff;
+            border: 1px solid #5b21b6;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+            font-family: 'Special Elite';
+        }
+        .safe-btn:hover { background: var(--accent-purple-dark); }
+        .safe-btn-cancel { background: #450a0a; border-color: #ef4444; }
+
+        #settings-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 1, 5, 0.96);
+            z-index: 250;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #settings-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        #settings-card {
+            background: var(--window-bg);
+            border: 3px solid var(--window-border);
+            border-radius: 8px;
+            padding: 30px;
+            width: 460px;
+            max-width: 90%;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.95);
+            backdrop-filter: blur(25px);
+            font-family: 'Special Elite', monospace;
+            text-align: center;
+        }
+        .settings-title {
+            font-size: 20px;
+            color: var(--accent-purple-bright);
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            padding-bottom: 10px;
+        }
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+        .setting-label {
+            font-size: 12px;
+            color: #d8b4fe;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .setting-control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .settings-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #5b21b6;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Special Elite';
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+        .settings-btn:hover {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: #a78bfa;
+        }
+        .settings-btn.active {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple-bright);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+        }
+        
+        .settings-slider {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(168, 85, 247, 0.15);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .resume-btn {
+            width: 100%;
+            background: var(--accent-purple);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-family: 'Special Elite';
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            letter-spacing: 1.5px;
+        }
+        .resume-btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent-purple-bright);
+            color: #000;
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        /* LORE OVERLAY */
+        #lore-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 1, 5, 0.94);
+            z-index: 6000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        #lore-overlay.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #lore-card {
+            background: #fbf7ff;
+            color: #1a0e2e;
+            border: 12px double var(--accent-purple-dark);
+            padding: 40px;
+            width: 520px;
+            max-width: 90%;
+            box-shadow: 0 35px 80px rgba(0,0,0,0.95);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 2px;
+        }
+        #lore-overlay.active #lore-card {
+            transform: scale(1) translateY(0);
+        }
+        .lore-typewriter {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            line-height: 1.6;
+            min-height: 180px;
+            margin-bottom: 25px;
+            font-style: italic;
+            border-bottom: 1px dashed rgba(107, 33, 168, 0.3);
+            padding-bottom: 15px;
+        }
+        .lore-btn {
+            display: block;
+            margin: 0 auto;
+            background: var(--accent-purple-dark);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Special Elite';
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+        .lore-btn:hover {
+            background: #1a0e2e;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* MOBILE CONTROLS SYSTEM - EXCLUSIVELY PURPLE DESIGN */
+        #mobile-joystick {
+            position: absolute;
+            bottom: 40px;
+            left: 45px;
+            z-index: 150;
+            display: none;
+            width: 195px; 
+            height: 195px; 
+            background: rgba(12, 6, 26, 0.45);
+            border: 3px dashed rgba(168, 85, 247, 0.35);
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9);
+            transition: opacity 0.3s ease;
+        }
+        #joystick-knob {
+            width: 85px; 
+            height: 85px; 
+            background: rgba(168, 85, 247, 0.85);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
+            transition: transform 0.05s ease;
+            pointer-events: none;
+        }
+        #mobile-actions {
+            position: absolute;
+            bottom: 45px;
+            right: 45px;
+            z-index: 150;
+            display: none;
+            gap: 20px;
+        }
+        .action-btn {
+            width: 95px; 
+            height: 95px; 
+            border-radius: 50%;
+            background: rgba(12, 6, 26, 0.95);
+            border: 4px solid rgba(168, 85, 247, 0.6);
+            color: #fff;
+            font-family: 'Special Elite';
+            font-size: 18px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.7);
+            cursor: pointer;
+            text-shadow: 0 2px 4px #000;
+        }
+        .action-btn:active {
+            background: var(--accent-purple);
+            border-color: #fff;
+            transform: scale(0.85);
+            box-shadow: 0 0 35px var(--accent-purple);
+        }
+
+        /* --- PARTE 2: NOVEL E CEMITÉRIO EXPLORÁVEL --- */
+        #part2-wrapper {
+            position: absolute;
+            inset: 0;
+            display: none;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background: #000;
+        }
+
+        #vignette {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.92) 150%);
+            z-index: 100; pointer-events: none;
+        }
+
+        #scene-bg { 
+            position: absolute; inset: 0; 
+            background-size: cover; background-position: center;
+            transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out, transform 4s ease-out; 
+            z-index: 1; opacity: 0; filter: blur(20px);
+        }
+
+        /* Caixa de Diálogo Clássica Estilo Undertale/Pokémon */
+        #ui {
+            position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 700px;
+            background: var(--ui-bg); padding: 30px; z-index: 2000; 
+            border: 2px solid #fff; border-radius: 4px;
+            display: none; opacity: 0; transition: opacity 0.5s ease;
+            box-shadow: 0 0 0 4px #000;
+        }
+        #ui-text { font-size: 26px; line-height: 1.3; margin-bottom: 25px; min-height: 80px; }
+        /* Indicador ▼ de continuação no diálogo */
+        #ui-indicator {
+            position: absolute;
+            right: 18px; bottom: 12px;
+            color: var(--accent-orange);
+            font-size: 22px;
+            opacity: 0;
+            animation: bobArrow 1s ease-in-out infinite;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(255,126,51,0.8);
+        }
+        #ui-indicator.show { opacity: 1; }
+        @keyframes bobArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        /* Sobreposições cinematográficas da Parte 2 */
+        #part2-grain {
+            position: absolute; inset: -50%; width: 200%; height: 200%;
+            pointer-events: none; opacity: 0.05; z-index: 90;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+            animation: grainShift 0.5s steps(3) infinite;
+        }
+        #part2-scanlines {
+            position: absolute; inset: 0; pointer-events: none; z-index: 91;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px);
+            opacity: 0.35;
+        }
+        .choices { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn-choice { background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 12px 24px; font-family: 'VT323'; font-size: 22px; cursor: pointer; transition: 0.3s; }
+        .btn-choice:hover { background: var(--accent-orange); color: #000; }
+
+        /* ENGINE CANVAS DE ARCADES E MINIGAMES DO CEMITÉRIO */
+        #game-container {
+            position: absolute; inset: 0; background: rgba(5,5,5,0.98); z-index: 3000;
+            display: none; flex-direction: column; justify-content: center; align-items: center; padding: 10px;
+        }
+        
+        .game-card {
+            background: #0a0a0a; border: 2px solid var(--accent-orange); padding: 25px;
+            text-align: center; max-width: 450px; width: 90%; margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(255,126,51,0.2);
+            position: relative; z-index: 3100;
+        }
+        .game-title { font-family: 'Special Elite'; color: var(--accent-orange); font-size: 30px; margin: 0 0 15px 0; }
+        .game-instructions { font-size: 22px; color: #ddd; line-height: 1.4; margin-bottom: 20px; text-align: center; }
+        
+        .btn-go {
+            background: var(--accent-orange); color: #000; border: none; padding: 10px 40px;
+            font-family: 'VT323'; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-go:hover { background: #fff; }
+
+        #countdown-overlay {
+            position: absolute; font-size: 90px; font-family: 'Special Elite';
+            color: #fff; text-shadow: 0 0 20px var(--accent-orange); display: none;
+            z-index: 3500; pointer-events: none; animation: pulseCount 0.8s infinite alternate;
+        }
+        @keyframes pulseCount { 0% { transform: scale(0.9); } 100% { transform: scale(1.2); } }
+
+        #game-canvas { background: #050505; border: 2px solid #333; max-width: 100%; display: none; }
+
+        /* Controle Mobile Universal da Parte 2 */
+        #mobile-controls {
+            display: none; flex-direction: column; align-items: center; gap: 5px; margin-top: 15px; width: 100%; max-width: 200px; z-index: 3200;
+        }
+        .dpad-row { display: flex; gap: 25px; }
+        .dpad-btn {
+            width: 55px; height: 55px; background: rgba(30, 30, 30, 0.9); border: 2px solid #777;
+            color: #fff; font-family: 'VT323'; font-size: 24px; display: flex; justify-content: center;
+            align-items: center; border-radius: 50%; user-select: none; -webkit-user-select: none;
+        }
+        .dpad-btn:active { background: var(--accent-orange); color: #000; border-color: #fff; }
+
+        #end { 
+            position: absolute; 
+            inset: 0; 
+            background: #000; 
+            z-index: 6000; 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 30px; 
+            text-align: center; 
+        }
+
+        /* RESPONSIVE OVERRIDES FOR MOBILE HUD */
+        @media (max-width: 900px) {
+            #task-panel {
+                width: 260px;
+                padding: 10px;
+                top: 70px;
+                left: 10px;
+                max-height: 280px;
+            }
+            .task-row {
+                font-size: 15px;
+                margin: 4px 0;
+            }
+            #cine-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewport-container">
+    
+    <!-- === MENU PRINCIPAL DE ENTRADA === -->
+    <div id="menu">
+        <div id="menu-grain"></div>
+        <div id="menu-scanlines"></div>
+        <div class="menu-content">
+            <h3 class="menu-title">venha ver o pôr do sol</h3>
+            <span class="menu-sub">Homenagem interativa à Lygia Fagundes Telles</span>
+            <button class="btn-menu-start" onclick="iniciarTudo()">INICIAR JOGO</button>
+            <p class="menu-quote" id="menu-quote"></p>
+        </div>
+        <div class="menu-credit">SUSSURRO · CINE INTERACTIVE</div>
+    </div>
+
+    <!-- ==================== PARTE 1: O CASARÃO ==================== -->
+    <div id="part1-wrapper">
+        <div id="game-scaler">
+            <div id="cine-badge">SUSSURRO | CINE INTERACTIVE</div>
+
+            <!-- MEDIDOR DE TENSÃO / PULSAÇÃO -->
+            <div id="tension-hud">
+                <div class="tension-label"><span class="heart-icon"></span> Pulsação</div>
+                <div id="tension-track"><div id="tension-fill"></div></div>
+            </div>
+            
+            <!-- BOTÃO PARA VER TAREFAS -->
+            <button id="tasks-trigger-btn" class="game-hud" onclick="TasksSystem.toggle(event)">PROCESSO COGNITIVO</button>
+
+            <!-- BOTÃO FLUTUANTE DE PAUSA -->
+            <button id="pause-trigger-btn" onclick="MenuSystem.open()" title="Pausar / Configurações">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.81,11.69,4.81,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                </svg>
+            </button>
+
+            <!-- TAREFAS AMPLIADAS (DE 6 PARA 10 COISAS A FAZER) -->
+            <div id="task-panel">
+                <div class="hud-hdr hdr-task">OBJETIVOS PSICOLÓGICOS</div>
+                <div id="t1" class="task-row"><span class="bullet"></span> Sobretudo de Lã (Quarto)</div>
+                <div id="t2" class="task-row"><span class="bullet"></span> Chaves de Latão (Banheiro)</div>
+                <div id="t3" class="task-row"><span class="bullet"></span> Café Amargo (Cozinha)</div>
+                <div id="t4" class="task-row"><span class="bullet"></span> Chopin na Vitrola (Sala)</div>
+                <div id="t5" class="task-row"><span class="bullet"></span> Autoanálise (Espelho)</div>
+                <!-- NOVOS OBJETIVOS -->
+                <div id="t_clock" class="task-row"><span class="bullet"></span> Consertar Relógio de Pêndulo</div>
+                <div id="t_safe" class="task-row"><span class="bullet"></span> Desvendar Segredo do Cofre</div>
+                <div id="t_lore" class="task-row"><span class="bullet"></span> Fragmentos de Diário (0/4)</div>
+                <div id="t_garden" class="task-row"><span class="bullet"></span> Visitar o Estufa / Jardim</div>
+                <div id="t6" class="task-row"><span class="bullet"></span> Sair do Casarão (Portão)</div>
+            </div>
+
+            <canvas id="engineCanvas"></canvas>
+
+            <!-- CONTROLES MOBILE DA PARTE 1 -->
+            <div id="mobile-joystick">
+                <div id="joystick-knob"></div>
+            </div>
+            <div id="mobile-actions">
+                <button class="action-btn" id="btn-action">AÇÃO</button>
+            </div>
+        </div>
+
+        <!-- COFRE DIALPAD INTERATIVO (DENTRO DA EXAMINÇÃO DO COFRE) -->
+        <div id="safe-input-overlay">
+            <div class="safe-lock-box">
+                <h3 style="color:var(--accent-purple-bright); margin-bottom:15px; font-size:18px;">DIGITE A COMBINAÇÃO</h3>
+                <div class="safe-display" id="safe-display-text">---</div>
+                <div class="safe-grid">
+                    <button class="safe-btn" onclick="SafePuzzle.press(1)">1</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(2)">2</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(3)">3</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(4)">4</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(5)">5</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(6)">6</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(7)">7</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(8)">8</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(9)">9</button>
+                    <button class="safe-btn safe-btn-cancel" onclick="SafePuzzle.cancel()">X</button>
+                    <button class="safe-btn" onclick="SafePuzzle.press(0)">0</button>
+                    <button class="safe-btn" style="background:#15803d; border-color:#22c55e;" onclick="SafePuzzle.confirm()">OK</button>
+                </div>
+                <p style="font-size:14px; color:#a78bfa;">A pista está ligada ao pôr do sol anunciado na carta.</p>
+            </div>
+        </div>
+
+        <!-- CONFIG OVERLAYS -->
+        <div id="settings-overlay">
+            <div id="settings-card">
+                <div class="settings-title">Cognição Pausada</div>
+                <div class="setting-group">
+                    <span class="setting-label">Áudio Ambiente & Sintonia</span>
+                    <button id="cfg-audio-btn" class="settings-btn" onclick="MenuSystem.toggleAudio()">Sintonia: Desativada</button>
+                </div>
+                <div class="setting-group" id="cfg-rotate-group" style="display: none;">
+                    <span class="setting-label">Giro de Tela</span>
+                    <button class="settings-btn" onclick="MenuSystem.forceLandscape()">Forçar Modo Paisagem</button>
+                </div>
+                <div class="setting-group">
+                    <span class="setting-label">Tamanho dos Textos do HUD</span>
+                    <div class="setting-control-row">
+                        <button id="txt-sz-sm" class="settings-btn" onclick="MenuSystem.setTextSize('small')">Padrão</button>
+                        <button id="txt-sz-lg" class="settings-btn active" onclick="MenuSystem.setTextSize('large')">Ampliado</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <span class="setting-label">Gama de Brilho (Contraste da Escuridão)</span>
+                    <input type="range" class="settings-slider" id="cfg-gamma" min="0.4" max="1.6" step="0.1" value="1.0" oninput="MenuSystem.updateGamma(this.value)">
+                </div>
+                <div class="setting-group" id="cfg-joy-opacity-group" style="display: none;">
+                    <span class="setting-label">Opacidade do Analógico Táctil</span>
+                    <input type="range" class="settings-slider" id="cfg-joy-opacity" min="0.1" max="1.0" step="0.1" value="1.0" oninput="MenuSystem.updateJoyOpacity(this.value)">
+                </div>
+                <button class="resume-btn" onclick="MenuSystem.close()">Retomar Exame</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PARTE 2: NOVEL & CEMITÉRIO ==================== -->
+    <div id="part2-wrapper">
+        <div id="vignette"></div>
+        <div id="scene-bg"></div>
+        <div id="part2-grain"></div>
+        <div id="part2-scanlines"></div>
+        
+        <div id="ui">
+            <div id="ui-name" style="color:var(--accent-orange); font-family:'Special Elite'; font-size:20px; margin-bottom:10px;"></div>
+            <div id="ui-text"></div>
+            <div class="choices" id="choice-box"></div>
+            <div id="ui-indicator">▼</div>
+        </div>
+
+        <div id="game-container">
+            <div class="game-card" id="mg-card">
+                <div class="game-title" id="mg-title">PREPARE-SE</div>
+                <div class="game-instructions" id="mg-desc">Instruções do jogo vão aparecer aqui.</div>
+                <button class="btn-go" id="mg-go-btn">GO!</button>
+            </div>
+            
+            <div id="countdown-overlay">3</div>
+            <canvas id="game-canvas" width="380" height="380"></canvas>
+            
+            <!-- Controle Mobile Unificado para Parte 2 -->
+            <div id="mobile-controls">
+                <button class="dpad-btn" id="btn-up">▲</button>
+                <div class="dpad-row">
+                    <button class="dpad-btn" id="btn-left">◀</button>
+                    <button class="dpad-btn" id="btn-right">▶</button>
+                </div>
+                <button class="dpad-btn" id="btn-down">▼</button>
+            </div>
+        </div>
+
+        <div id="end">
+            <h1 id="end-title" style="color: var(--accent-orange); font-family: 'Special Elite'; font-size: 45px; margin-bottom: 20px;"></h1>
+            <p id="end-desc" style="font-size: 24px; max-width: 650px; color:#ccc; line-height: 1.4;"></p>
+            <button onclick="location.reload()" style="background:none; border:1px solid #fff; color:#fff; padding:12px 40px; font-size:26px; font-family:'VT323'; cursor:pointer; margin-top:40px; border-radius:4px;">RECOMEÇAR</button>
+        </div>
+    </div>
+
+    <!-- DOCUMENT LORE PANEL (COMPARTILHADO) -->
+    <div id="lore-overlay">
+        <div id="lore-card">
+            <div id="lore-text" class="lore-typewriter">Estou lendo...</div>
+            <button class="lore-btn" onclick="LoreSystem.close()">Fechar Exame</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/**
+ * 🚀 SUSSURRO SPLICED INTEGRATION SYSTEM v10.0 [DIRECTOR'S FULL EDITION]
+ * Integração seamless entre exploração do casarão (Parte 1) e o cemitério de Santa Maria (Parte 2).
+ */
+
+const V_WIDTH = 960;
+const V_HEIGHT = 560;
+const TIME_STEP = 1 / 60;
+
+class Vector2 {
+    constructor(x = 0, y = 0) { this.x = x; this.y = y; }
+    set(x, y) { this.x = x; this.y = y; return this; }
+}
+
+// FLAG MESTRE DE CONTROLE DE SESSÕES
+let CURRENT_GAME_PART = 1;
+
+// ROTAÇÃO DE EPÍGRAFES NO MENU (atmosfera, sem alterar a história)
+const MenuQuotes = {
+    lines: [
+        "“O pôr do sol se vê melhor logo ali na frente...”",
+        "“O tempo simplesmente parou para nós.”",
+        "“Onde o crepúsculo de Santa Maria nos espera.”",
+        "“Venha. Quero te mostrar uma última coisa.”"
+    ],
+    idx: 0, timer: null,
+    start() {
+        let el = document.getElementById('menu-quote');
+        if (!el) return;
+        el.textContent = this.lines[0];
+        el.style.opacity = '1';
+        this.timer = setInterval(() => {
+            el.style.opacity = '0';
+            setTimeout(() => {
+                this.idx = (this.idx + 1) % this.lines.length;
+                el.textContent = this.lines[this.idx];
+                el.style.opacity = '1';
+            }, 1100);
+        }, 5200);
+    },
+    stop() { if (this.timer) clearInterval(this.timer); }
+};
+window.addEventListener('DOMContentLoaded', () => MenuQuotes.start());
+
+// CONTROLADOR DE INICIALIZAÇÃO GERAL
+function iniciarTudo() {
+    MenuQuotes.stop();
+    // Esconde o menu com fade out elegante
+    const menuDiv = document.getElementById('menu');
+    menuDiv.style.opacity = '0';
+    
+    // Liga o som procedural
+    SoundSynth.init();
+    SoundSynth.toggle();
+    
+    setTimeout(() => {
+        menuDiv.style.display = 'none';
+        
+        // Exibe e inicializa a Parte 1
+        const part1 = document.getElementById('part1-wrapper');
+        part1.style.display = 'flex';
+        setTimeout(() => { part1.style.opacity = '1'; }, 50);
+        
+        GameEngine.init();
+    }, 1500);
+}
+
+// SINTONIA PROCEDURAL (MÚSICA & FX) - PARTE 1
+const SoundSynth = {
+    ctx: null, rainNode: null, windOsc: null, heartOsc: null, radioStatic: null, radioGain: null,
+    pianoGain: null, thunderGain: null, enabled: false, nextHeartBeat: 0,
+    
+    init() {
+        if (this.ctx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContext();
+    },
+    toggle() {
+        this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+        
+        if (!this.enabled) {
+            this.enabled = true;
+            const btn = document.getElementById('cfg-audio-btn');
+            if (btn) {
+                btn.innerText = "Sintonia: Ativa (🔇 Mutar)";
+                btn.classList.add('active');
+            }
+            this.startRain();
+            this.startWind();
+            this.startStatic();
+            this.startChopinSynth();
+        } else {
+            this.enabled = false;
+            const btn = document.getElementById('cfg-audio-btn');
+            if (btn) {
+                btn.innerText = "Sintonia: Desativada (🔊 Ativar)";
+                btn.classList.remove('active');
+            }
+            this.stopAll();
+        }
+    },
+    stopAll() {
+        if (this.ctx) {
+            this.ctx.close().then(() => { this.ctx = null; });
+        }
+    },
+    startRain() {
+        if (!this.ctx) return;
+        let bufferSize = 2 * this.ctx.sampleRate;
+        let noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        let output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+        let whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        let filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, this.ctx.currentTime);
+
+        let gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        whiteNoise.start();
+    },
+    startWind() {
+        if (!this.ctx) return;
+        let windFilter = this.ctx.createBiquadFilter();
+        windFilter.type = 'bandpass';
+        windFilter.Q.setValueAtTime(8, this.ctx.currentTime);
+
+        let windGain = this.ctx.createGain();
+        windGain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+
+        let bufferSize = 2 * this.ctx.sampleRate;
+        let noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        let output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+        let windSrc = this.ctx.createBufferSource();
+        windSrc.buffer = noiseBuffer;
+        windSrc.loop = true;
+
+        windSrc.connect(windFilter);
+        windFilter.connect(windGain);
+        windGain.connect(this.ctx.destination);
+        windSrc.start();
+
+        let modulate = () => {
+            if (!this.enabled || !this.ctx) return;
+            let now = this.ctx.currentTime;
+            let targetFreq = 180 + Math.random() * 320;
+            let targetVol = 0.02 + Math.random() * 0.08;
+            windFilter.frequency.exponentialRampToValueAtTime(targetFreq, now + 3);
+            windGain.gain.linearRampToValueAtTime(targetVol, now + 3);
+            setTimeout(modulate, 3000);
+        };
+        modulate();
+    },
+    startStatic() {
+        if (!this.ctx) return;
+        let bufferSize = 1 * this.ctx.sampleRate;
+        let noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        let output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+        this.radioStatic = this.ctx.createBufferSource();
+        this.radioStatic.buffer = noiseBuffer;
+        this.radioStatic.loop = true;
+
+        let bandpass = this.ctx.createBiquadFilter();
+        bandpass.type = 'bandpass';
+        bandpass.frequency.setValueAtTime(1000, this.ctx.currentTime);
+        bandpass.Q.setValueAtTime(4, this.ctx.currentTime);
+
+        this.radioGain = this.ctx.createGain();
+        this.radioGain.gain.setValueAtTime(0.0, this.ctx.currentTime);
+
+        this.radioStatic.connect(bandpass);
+        bandpass.connect(this.radioGain);
+        this.radioGain.connect(this.ctx.destination);
+        this.radioStatic.start();
+    },
+    updateRadioVolume(distance) {
+        if (!this.enabled || !this.radioGain) return;
+        let vol = Math.max(0, 1 - (distance / 400));
+        vol = Math.pow(vol, 3.0) * 0.18;
+        this.radioGain.gain.linearRampToValueAtTime(vol, this.ctx.currentTime + 0.15);
+    },
+    playHeartbeat(bpm) {
+        if (!this.enabled || !this.ctx) return;
+        let now = this.ctx.currentTime;
+        if (now < this.nextHeartBeat) return;
+
+        let interval = 60 / bpm;
+        this.nextHeartBeat = now + interval;
+
+        let playPulse = (delay, factor) => {
+            let osc = this.ctx.createOscillator();
+            let gain = this.ctx.createGain();
+            osc.frequency.setValueAtTime(65, now + delay);
+            osc.frequency.exponentialRampToValueAtTime(5, now + delay + 0.18);
+            gain.gain.setValueAtTime(0.28 * factor, now + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.18);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + delay);
+            osc.stop(now + delay + 0.22);
+        };
+
+        playPulse(0, 1.0);
+        playPulse(0.15, 0.6);
+    },
+    playStep(terrainType) {
+        if (!this.enabled || !this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        let filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        filter.type = 'lowpass';
+
+        if (terrainType === 'wood') {
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.exponentialRampToValueAtTime(15, now + 0.08);
+            filter.frequency.setValueAtTime(200, now);
+            gain.gain.setValueAtTime(0.08, now);
+        } else if (terrainType === 'carpet') {
+            osc.frequency.setValueAtTime(80, now);
+            osc.frequency.exponentialRampToValueAtTime(10, now + 0.12);
+            filter.frequency.setValueAtTime(100, now);
+            gain.gain.setValueAtTime(0.04, now);
+        } else {
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.05);
+            filter.frequency.setValueAtTime(400, now);
+            gain.gain.setValueAtTime(0.12, now);
+        }
+
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(now + 0.15);
+    },
+    triggerThunder() {
+        if (!this.enabled || !this.ctx) return;
+        let now = this.ctx.currentTime;
+        let bufferSize = 2 * this.ctx.sampleRate;
+        let noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        let output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+        let thunderNoise = this.ctx.createBufferSource();
+        thunderNoise.buffer = noiseBuffer;
+
+        let filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(80, now);
+        filter.frequency.exponentialRampToValueAtTime(20, now + 1.8);
+
+        let gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+        thunderNoise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        thunderNoise.start();
+    },
+    startChopinSynth() {
+        if (!this.ctx) return;
+        this.pianoGain = this.ctx.createGain();
+        this.pianoGain.gain.setValueAtTime(0.0, this.ctx.currentTime);
+        this.pianoGain.connect(this.ctx.destination);
+
+        let notes = [130.81, 146.83, 155.56, 174.61, 196.00, 207.65, 233.08, 261.63];
+        let melody = [0, 2, 4, 3, 2, 5, 4, 3, 1, 3, 2, 1, 0];
+        let step = 0;
+
+        let playNote = () => {
+            if (!this.enabled || !this.ctx || CURRENT_GAME_PART !== 1) return;
+            if (GameState.tasks.radio) {
+                this.pianoGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1);
+                return;
+            }
+            
+            let now = this.ctx.currentTime;
+            let noteIdx = melody[step % melody.length];
+            let freq = notes[noteIdx];
+
+            let osc1 = this.ctx.createOscillator();
+            let osc2 = this.ctx.createOscillator();
+            let noteGain = this.ctx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'triangle';
+            
+            let lfo = this.ctx.createOscillator();
+            let lfoGain = this.ctx.createGain();
+            lfo.frequency.setValueAtTime(3.5, now);
+            lfoGain.gain.setValueAtTime(1.8, now);
+            lfo.connect(lfoGain);
+            lfoGain.connect(osc1.frequency);
+            lfoGain.connect(osc2.frequency);
+
+            osc1.frequency.setValueAtTime(freq, now);
+            osc2.frequency.setValueAtTime(freq * 0.5, now);
+
+            noteGain.gain.setValueAtTime(0, now);
+            noteGain.gain.linearRampToValueAtTime(0.07, now + 0.1);
+            noteGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+            osc1.connect(noteGain);
+            osc2.connect(noteGain);
+            noteGain.connect(this.pianoGain);
+
+            lfo.start(now);
+            osc1.start(now);
+            osc2.start(now);
+            
+            lfo.stop(now + 2.0);
+            osc1.stop(now + 2.0);
+            osc2.stop(now + 2.0);
+
+            step++;
+            setTimeout(playNote, 1600);
+        };
+        playNote();
+    }
+};
+
+// SINTONIZADOR DE SINAL E ÁUDIO PROCEDURAL - PARTE 2
+const audioPart2 = {
+    ctx: null, nodes: [], gain: null, ambientPlayer: null,
+    init() {
+        this.ambientPlayer = new Audio('https://www.image2url.com/r2/default/audio/1776029511733-0ca565c2-66a1-4843-9199-3ba48ed80387.mp3');
+        this.ambientPlayer.loop = true; this.ambientPlayer.volume = 0.15;
+        this.ambientPlayer.play().catch(e => console.log("Aguardando interação inicial..."));
+
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.gain = this.ctx.createGain(); this.gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        this.gain.connect(this.ctx.destination);
+        [73.42, 87.31, 110.00, 146.83].forEach((f, i) => {
+            const osc = this.ctx.createOscillator(); const vca = this.ctx.createGain();
+            osc.type = i % 2 === 0 ? 'triangle' : 'sine'; osc.frequency.setValueAtTime(f, this.ctx.currentTime);
+            vca.gain.setValueAtTime(0.04, this.ctx.currentTime); osc.connect(vca); vca.connect(this.gain);
+            osc.start(); this.nodes.push(osc);
+        });
+        this.gain.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 5);
+    },
+    stopAll() {
+        if(this.ambientPlayer) this.ambientPlayer.pause();
+        if(this.gain) this.gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2);
+    },
+    playTone(freq, duration, type = 'sine', volume = 0.1) {
+        if(!this.ctx) return;
+        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        g.gain.setValueAtTime(volume, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime + duration);
+    }
+};
+
+// COFRE PUZZLE CONTROLADOR (NOVO)
+const SafePuzzle = {
+    currentInput: "",
+    correctCode: "1830", // Alinhado ao horário do pôr do sol do bilhete (18h30)
+    open() {
+        if (GameState.tasks.safe) return;
+        GameState.isPaused = true;
+        document.getElementById('safe-input-overlay').style.display = "flex";
+        this.currentInput = "";
+        this.updateDisplay();
+    },
+    press(num) {
+        if (this.currentInput.length < 4) {
+            this.currentInput += num;
+            this.updateDisplay();
+            SoundSynth.playStep('carpet');
+        }
+    },
+    cancel() {
+        document.getElementById('safe-input-overlay').style.display = "none";
+        GameState.isPaused = false;
+    },
+    updateDisplay() {
+        let display = this.currentInput;
+        while (display.length < 4) display += "-";
+        document.getElementById('safe-display-text').innerText = display;
+    },
+    confirm() {
+        if (this.currentInput === this.correctCode) {
+            document.getElementById('safe-input-overlay').style.display = "none";
+            GameState.isPaused = false;
+            GameState.tasks.safe = true;
+            GameState.checkHUD();
+            
+            // Recompensar com a chave do portão ou carta secreta
+            NarrativeSystem.setThought("O cofre destravou! Encontrei cartas antigas e a Chave Geral de Latão do portão dos fundos do casarão! Ricardo guardava tudo.");
+            audioPart2.playTone(520, 0.4, 'sine', 0.2);
+        } else {
+            this.currentInput = "";
+            this.updateDisplay();
+            SoundSynth.playStep('asphalt'); // Erro de som
+            NarrativeSystem.setThought("Código incorreto. A trava eletrônica de Ricardo permaneceu fechada.");
+        }
+    }
+};
+
+// GERENCIADOR DE INPUT CENTRAL (PARTE 1)
+const Input = {
+    keys: Object.create(null),
+    isMobile: false,
+    joystickData: { x: 0, y: 0, active: false, startX: 0, startY: 0 },
+    
+    init() {
+        window.addEventListener('keydown', e => {
+            if (GameState.isPaused) return;
+            this.keys[e.key.toLowerCase()] = true;
+        });
+        window.addEventListener('keyup', e => {
+            this.keys[e.key.toLowerCase()] = false;
+        });
+        
+        const touchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        const mobileViewport = window.innerWidth < 900;
+        
+        if (touchDevice && mobileViewport) {
+            this.isMobile = true;
+            document.getElementById('mobile-joystick').style.display = 'flex';
+            document.getElementById('mobile-actions').style.display = 'flex';
+            document.getElementById('cfg-rotate-group').style.display = 'block';
+            document.getElementById('cfg-joy-opacity-group').style.display = 'block';
+            this.bindMobileJoystick();
+            this.bindMobileAction();
+        } else {
+            this.isMobile = false;
+            document.getElementById('mobile-joystick').style.display = 'none';
+            document.getElementById('mobile-actions').style.display = 'none';
+        }
+    },
+    bindMobileJoystick() {
+        let joy = document.getElementById('mobile-joystick');
+        let knob = document.getElementById('joystick-knob');
+        
+        let handleStart = (e) => {
+            if (GameState.isPaused || CURRENT_GAME_PART !== 1) return;
+            e.preventDefault();
+            let rect = joy.getBoundingClientRect();
+            this.joystickData.active = true;
+            this.joystickData.startX = rect.left + rect.width / 2;
+            this.joystickData.startY = rect.top + rect.height / 2;
+        };
+
+        let handleMove = (e) => {
+            if (!this.joystickData.active || GameState.isPaused || CURRENT_GAME_PART !== 1) return;
+            e.preventDefault();
+            let touch = e.touches[0];
+            let dx = touch.clientX - this.joystickData.startX;
+            let dy = touch.clientY - this.joystickData.startY;
+            let dist = Math.hypot(dx, dy);
+            let maxDist = 80; 
+
+            if (dist > maxDist) {
+                dx = (dx / dist) * maxDist;
+                dy = (dy / dist) * maxDist;
+            }
+
+            this.joystickData.x = dx / maxDist;
+            this.joystickData.y = dy / maxDist;
+
+            knob.style.transform = `translate(${dx}px, ${dy}px)`;
+
+            this.keys['arrowup_m'] = this.joystickData.y < -0.25;
+            this.keys['arrowdown_m'] = this.joystickData.y > 0.25;
+            this.keys['arrowleft_m'] = this.joystickData.x < -0.25;
+            this.keys['arrowright_m'] = this.joystickData.x > 0.25;
+        };
+
+        let handleEnd = (e) => {
+            this.joystickData.active = false;
+            this.joystickData.x = 0;
+            this.joystickData.y = 0;
+            knob.style.transform = 'translate(0px, 0px)';
+            this.keys['arrowup_m'] = false;
+            this.keys['arrowdown_m'] = false;
+            this.keys['arrowleft_m'] = false;
+            this.keys['arrowright_m'] = false;
+        };
+
+        joy.addEventListener('touchstart', handleStart, {passive: false});
+        window.addEventListener('touchmove', handleMove, {passive: false});
+        window.addEventListener('touchend', handleEnd, {passive: false});
+    },
+    bindMobileAction() {
+        let btn = document.getElementById('btn-action');
+        btn.addEventListener('touchstart', (e) => {
+            if (GameState.isPaused || CURRENT_GAME_PART !== 1) return;
+            e.preventDefault();
+            this.keys['action_m'] = true;
+        }, {passive: false});
+        btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys['action_m'] = false;
+        }, {passive: false});
+    },
+    isDown(key) { return !!this.keys[key]; }
+};
+
+const LoreSystem = {
+    active: false,
+    content: {
+        envelope: "Raquel: 'Um bilhete elegante do meu noivo... Ele espera que eu seja o ornamento perfeito para a nossa nova mansão. O amor dele é tão geométrico... tão seguro.'",
+        letter: "Raquel: 'Chopin... esta partitura que Ricardo me deu no nosso primeiro aniversário. Escrito à mão nas margens: *Para Raquel, que compreende que o pôr do sol é a única eternidade que nos resta em Santa Maria.* (Anotação posterior: 'O relógio de pêndulo deve parar na hora do nosso crepúsculo final, às 18:30.')'",
+        oldPhoto: "Ricardo e eu em frente ao portão de Santa Maria, cinco anos atrás. Ele sorria sem possuir nada no bolso... apenas aquela insolência que agora me aterroriza.",
+        diary1: "[FRAGMENTO 1/4] 'Ricardo tornou-se obcecado pelo casarão abandonado dos Meireles. Ele me comprou flores hoje, mas elas já estavam murchas. Há uma febre em seus olhos.'",
+        diary2: "[FRAGMENTO 2/4] 'Eu decidi deixá-lo. Meu casamento com o banqueiro me trará segurança, mas por que sinto que estou vendendo minha alma em parcelas?'",
+        diary3: "[FRAGMENTO 3/4] 'Ele me mandou uma última carta. Diz que o pôr do sol no jazigo de Santa Maria selará o nosso pacto. Estou com medo de ir... mas sinto uma atração terrível por este fim.'",
+        diary4: "[FRAGMENTO 4/4] 'Consegui destravar a estufa. As rosas negras floresceram alimentadas pelo mofo e pelo esquecimento. Ricardo me espera... o código do cofre é o horário de nossa última despedida.'"
+    },
+    open(id) {
+        if (this.active || GameState.isPaused) return;
+        this.active = true;
+        let overlay = document.getElementById('lore-overlay');
+        let textDiv = document.getElementById('lore-text');
+        textDiv.innerText = this.content[id] || "";
+        overlay.classList.add('active');
+        GameState.cutsceneActive = true;
+
+        // Atualizar contagem de diários se for fragmento
+        if (id.startsWith('diary')) {
+            if (!GameState.diariesCollected.has(id)) {
+                GameState.diariesCollected.add(id);
+                GameState.tasks.diaryCount = GameState.diariesCollected.size;
+                GameState.checkHUD();
+                
+                // Mostrar progresso no HUD
+                let hRow = document.getElementById('t_lore');
+                if (hRow) {
+                    hRow.innerHTML = `<span class="bullet"></span> Fragmentos de Diário (${GameState.tasks.diaryCount}/4)`;
+                    if (GameState.tasks.diaryCount === 4) {
+                        hRow.classList.add('task-complete');
+                    }
+                }
+            }
+        }
+    },
+    close() {
+        let overlay = document.getElementById('lore-overlay');
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            this.active = false;
+            GameState.cutsceneActive = false;
+        }, 500);
+    }
+};
+
+const TasksSystem = {
+    timeoutId: null,
+    toggle(event) {
+        if (event) event.stopPropagation();
+        let panel = document.getElementById('task-panel');
+        if (panel.classList.contains('show')) {
+            this.hide();
+        } else {
+            this.show();
+        }
+    },
+    show() {
+        let panel = document.getElementById('task-panel');
+        panel.classList.add('show');
+        if (this.timeoutId) clearTimeout(this.timeoutId);
+        this.timeoutId = setTimeout(() => {
+            this.hide();
+        }, 8000); // Maior tempo no ar para acompanhar novos objetivos
+    },
+    hide() {
+        let panel = document.getElementById('task-panel');
+        panel.classList.remove('show');
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+            this.timeoutId = null;
+        }
+    }
+};
+
+// Fechar popup de tarefas ao clicar fora
+window.addEventListener('click', (e) => {
+    let panel = document.getElementById('task-panel');
+    let trigger = document.getElementById('tasks-trigger-btn');
+    if (panel && panel.classList.contains('show')) {
+        if (!panel.contains(e.target) && e.target !== trigger) {
+            TasksSystem.hide();
+        }
+    }
+});
+
+const MenuSystem = {
+    open() {
+        GameState.isPaused = true;
+        document.getElementById('settings-overlay').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('settings-overlay').classList.add('active');
+        }, 30);
+    },
+    close() {
+        document.getElementById('settings-overlay').classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('settings-overlay').style.display = 'none';
+            GameState.isPaused = false;
+        }, 300);
+    },
+    toggleAudio() {
+        SoundSynth.toggle();
+    },
+    forceLandscape() {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(() => {});
+        }
+        if (!SoundSynth.enabled) {
+            SoundSynth.toggle();
+        }
+    },
+    setTextSize(size) {
+        document.getElementById('txt-sz-sm').classList.remove('active');
+        document.getElementById('txt-sz-lg').classList.remove('active');
+        
+        let tPanel = document.getElementById('task-panel');
+        let taskRows = document.querySelectorAll('.task-row');
+
+        if(size === 'small') {
+            document.getElementById('txt-sz-sm').classList.add('active');
+            taskRows.forEach(row => row.style.fontSize = "16px");
+            tPanel.style.width = "280px";
+        } else {
+            document.getElementById('txt-sz-lg').classList.add('active');
+            taskRows.forEach(row => row.style.fontSize = "19px");
+            tPanel.style.width = "340px";
+        }
+    },
+    updateGamma(val) {
+        document.documentElement.style.setProperty('--gamma-multiplier', val);
+    },
+    updateJoyOpacity(val) {
+        document.getElementById('mobile-joystick').style.opacity = val;
+    }
+};
+
+// TEXTURAS CACHEADAS DA PARTE 1
+const TextureCache = {
+    woodFloor: null, tilesFloor: null, carpetFloor: null, bathroomTiles: null,
+    corridorPlanks: null, wallPaper: null, asphalt: null, puddleNoise: null,
+    lightCone: null, ricardoLight: null, sedanLight: null, fireplaceEmbers: null,
+    conservatorySoil: null,
+
+    async init() {
+        this.woodFloor = this.createBuffer(600, 500, (ctx) => {
+            ctx.fillStyle = "#120c0a"; ctx.fillRect(0, 0, 600, 500);
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.55)";
+            ctx.lineWidth = 2;
+            for(let y = 0; y < 500; y += 28) {
+                ctx.fillStyle = (Math.sin(y*0.04) > 0) ? "#160e0b" : "#0f0a08";
+                ctx.fillRect(0, y, 600, 28);
+                ctx.strokeRect(0, y, 600, 28);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.02)";
+                ctx.fillRect(0, y + 2, 600, 2);
+                ctx.fillStyle = "rgba(0,0,0,0.15)";
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillRect(Math.random()*600, y + 5 + Math.random()*15, 60 + Math.random()*90, 1.5);
+                }
+            }
+        });
+
+        this.tilesFloor = this.createBuffer(600, 500, (ctx) => {
+            ctx.fillStyle = "#1c1917"; ctx.fillRect(0, 0, 600, 500);
+            let tileSize = 40;
+            for(let y = 0; y < 500; y += tileSize) {
+                for(let x = 0; x < 600; x += tileSize) {
+                    let isBlack = ((x / tileSize) + (y / tileSize)) % 2 === 0;
+                    ctx.fillStyle = isBlack ? "#09090b" : "#221c1a";
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+                    ctx.fillRect(x, y + tileSize - 2, tileSize, 2);
+                    ctx.fillRect(x + tileSize - 2, y, 2, tileSize);
+                }
+            }
+        });
+
+        this.carpetFloor = this.createBuffer(700, 500, (ctx) => {
+            ctx.fillStyle = "#27080a"; ctx.fillRect(0, 0, 700, 500);
+            ctx.strokeStyle = "rgba(180, 120, 30, 0.12)";
+            ctx.lineWidth = 1.5;
+            for(let y = 10; y < 500; y += 18) {
+                ctx.beginPath(); ctx.moveTo(0, y);
+                for(let x = 0; x < 700; x += 15) {
+                    ctx.lineTo(x, y + Math.sin(x*0.08)*5);
+                }
+                ctx.stroke();
+            }
+            ctx.fillStyle = "rgba(0,0,0,0.2)";
+            for (let i = 0; i < 700; i += 32) {
+                ctx.fillRect(i, 0, 8, 500);
+            }
+        });
+
+        this.bathroomTiles = this.createBuffer(400, 400, (ctx) => {
+            ctx.fillStyle = "#172554"; ctx.fillRect(0, 0, 400, 400);
+            let sz = 24;
+            ctx.strokeStyle = "rgba(255,255,255,0.03)";
+            ctx.lineWidth = 1;
+            for(let y = 0; y < 400; y += sz) {
+                for(let x = 0; x < 400; x += sz) {
+                    ctx.fillStyle = (Math.sin(x*y)*12 > 0) ? "#0f172a" : "#020617";
+                    ctx.fillRect(x, y, sz, sz);
+                    ctx.strokeRect(x, y, sz, sz);
+                }
+            }
+        });
+
+        this.corridorPlanks = this.createBuffer(300, 900, (ctx) => {
+            ctx.fillStyle = "#0a0706"; ctx.fillRect(0, 0, 300, 900);
+            ctx.strokeStyle = "rgba(0,0,0,0.75)";
+            ctx.lineWidth = 2.5;
+            for(let x = 0; x < 300; x += 36) {
+                ctx.fillStyle = (Math.cos(x*0.06) > 0) ? "#0d0908" : "#070504";
+                ctx.fillRect(x, 0, 36, 900);
+                ctx.strokeRect(x, 0, 36, 900);
+            }
+        });
+
+        // TEXTURA PARA O NOVO CÔMODO: ESTUFA/JARDIM DE INVERNO
+        this.conservatorySoil = this.createBuffer(600, 500, (ctx) => {
+            ctx.fillStyle = "#1c1410"; ctx.fillRect(0, 0, 600, 500);
+            // Tijolos da estufa
+            ctx.strokeStyle = "rgba(0,0,0,0.4)";
+            ctx.lineWidth = 2;
+            let sz = 35;
+            for(let y = 0; y < 500; y += sz) {
+                for(let x = 0; x < 600; x += sz) {
+                    ctx.fillStyle = (Math.sin(x*y)*20 > 0) ? "#1f1814" : "#19110d";
+                    ctx.fillRect(x, y, sz, sz);
+                    ctx.strokeRect(x, y, sz, sz);
+                }
+            }
+            // Mofo e trepadeiras nas bordas
+            ctx.fillStyle = "rgba(6, 78, 59, 0.25)";
+            for(let i=0; i<80; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random()*600, Math.random()*500, 15+Math.random()*45, 0, Math.PI*2);
+                ctx.fill();
+            }
+        });
+
+        this.wallPaper = this.createBuffer(1600, 100, (ctx) => {
+            ctx.fillStyle = "#07070a"; ctx.fillRect(0, 0, 1600, 100);
+            ctx.fillStyle = "#030306";
+            for (let x = 0; x < 1600; x += 18) {
+                ctx.fillRect(x, 0, 5, 100);
+            }
+            let grad = ctx.createLinearGradient(0, 0, 0, 100);
+            grad.addColorStop(0, "rgba(0,0,0,0.98)");
+            grad.addColorStop(0.6, "rgba(0,0,0,0.4)");
+            grad.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 1600, 100);
+        });
+
+        this.asphalt = this.createBuffer(1600, 320, (ctx) => {
+            ctx.fillStyle = "#040507"; ctx.fillRect(0, 0, 1600, 320);
+            for (let i = 0; i < 11000; i++) {
+                let nVal = Math.random();
+                let col = Math.floor(5 + nVal * 16);
+                ctx.fillStyle = `rgb(${col},${col + 3})`;
+                ctx.fillRect(Math.random() * 1600, Math.random() * 320, 1.2, 1.2);
+            }
+        });
+
+        this.puddleNoise = this.createBuffer(450, 150, (ctx) => {
+            let grad = ctx.createRadialGradient(225, 75, 5, 225, 75, 210);
+            grad.addColorStop(0, "rgba(8, 16, 28, 0.95)");
+            grad.addColorStop(0.7, "rgba(3, 6, 12, 0.6)");
+            grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 450, 150);
+        });
+
+        this.lightCone = this.createBuffer(400, 600, (ctx) => {
+            let cone = ctx.createLinearGradient(200, 0, 200, 600);
+            cone.addColorStop(0, "rgba(255, 225, 120, 0.42)"); 
+            cone.addColorStop(0.2, "rgba(255, 210, 100, 0.2)");
+            cone.addColorStop(0.7, "rgba(255, 170, 80, 0.04)");
+            cone.addColorStop(1, "rgba(255, 170, 80, 0)");
+            ctx.fillStyle = cone; ctx.beginPath(); 
+            ctx.moveTo(185, 0); ctx.lineTo(215, 0); ctx.lineTo(390, 600); ctx.lineTo(10, 600); 
+            ctx.closePath(); ctx.fill();
+        });
+
+        this.ricardoLight = this.createCarLightBuffer(450, 200, "rgba(255, 240, 180, 0.55)", "rgba(255, 200, 120, 0.0)");
+        this.sedanLight = this.createCarLightBuffer(380, 160, "rgba(255, 225, 150, 0.42)", "rgba(255, 190, 100, 0.0)");
+    },
+    createBuffer(w, h, drawFn) {
+        let buffer = document.createElement('canvas');
+        buffer.width = w; buffer.height = h;
+        drawFn(buffer.getContext('2d'));
+        return buffer;
+    },
+    createCarLightBuffer(w, h, colorStart, colorEnd) {
+        let buffer = document.createElement('canvas');
+        buffer.width = w; buffer.height = h;
+        let ctx = buffer.getContext('2d');
+        let grad = ctx.createLinearGradient(0, h/2, w, h/2);
+        grad.addColorStop(0, colorStart);
+        grad.addColorStop(0.4, "rgba(255, 235, 180, 0.18)");
+        grad.addColorStop(1, colorEnd);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(0, h/2 - 20); ctx.lineTo(w, 0); ctx.lineTo(w, h); ctx.lineTo(0, h/2 + 20);
+        ctx.closePath(); ctx.fill();
+        return buffer;
+    }
+};
+
+class SceneManager {
+    constructor() {
+        this.scenes = new Map(); this.currentScene = null;
+        this.fadeAlpha = 0; this.isTransitioning = false; this.targetSceneName = null;
+    }
+    add(name, sceneInstance) { this.scenes.set(name, sceneInstance); }
+    switchTo(name) {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true; this.targetSceneName = name; this.fadeAlpha = 0;
+    }
+    update(dt) {
+        if (this.isTransitioning) {
+            this.fadeAlpha += dt * 1.5;
+            if (this.fadeAlpha >= 1) {
+                this.fadeAlpha = 1;
+                this.currentScene = this.scenes.get(this.targetSceneName);
+                this.currentScene.onEnter();
+                this.isTransitioning = false;
+            }
+        } else if (this.fadeAlpha > 0) {
+            this.fadeAlpha -= dt * 1.5;
+            if (this.fadeAlpha < 0) this.fadeAlpha = 0;
+        }
+        if (this.currentScene) this.currentScene.update(dt);
+    }
+    draw(ctx) {
+        if (this.currentScene) this.currentScene.draw(ctx);
+        if (this.fadeAlpha > 0) {
+            ctx.fillStyle = `rgba(1, 1, 3, ${this.fadeAlpha})`;
+            ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+        }
+    }
+}
+
+const NarrativeSystem = {
+    targetText: "", displayedText: "", timer: 0, speed: 0.02, isPanicText: false,
+    setThought(txt, panic = false) {
+        if (this.targetText === txt) return;
+        this.targetText = txt; this.displayedText = ""; this.timer = 0; this.isPanicText = panic;
+        // Mostrar automaticamente a aba de tarefas para refletir novos estados
+        TasksSystem.show();
+    },
+    update(dt) {
+        if (this.displayedText.length < this.targetText.length) {
+            this.timer += dt;
+            if (this.timer >= this.speed) {
+                let count = Math.floor(this.timer / this.speed);
+                this.displayedText = this.targetText.substring(0, this.displayedText.length + count);
+                this.timer %= this.speed;
+            }
+        }
+    }
+};
+
+function drawThoughtBubble(ctx, text, px, py, isPanic) {
+    if (!text || text.trim() === "") return;
+    
+    ctx.save();
+    ctx.font = "20px 'VT323'";
+    
+    let maxWidth = 230;
+    let lineHeight = 20;
+    let words = text.split(' ');
+    let lines = [];
+    let currentLine = '';
+    
+    for (let i = 0; i < words.length; i++) {
+        let word = words[i];
+        let testLine = currentLine + (currentLine ? ' ' : '') + word;
+        let metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && i > 0) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    }
+    if (currentLine) {
+        lines.push(currentLine);
+    }
+    
+    let maxMeasuredWidth = 0;
+    for (let i = 0; i < lines.length; i++) {
+        let w = ctx.measureText(lines[i]).width;
+        if (w > maxMeasuredWidth) maxMeasuredWidth = w;
+    }
+    
+    let paddingX = 14;
+    let paddingY = 10;
+    let boxWidth = maxMeasuredWidth + paddingX * 2;
+    let boxHeight = lines.length * lineHeight + paddingY * 2;
+    
+    let bx = px - boxWidth / 2;
+    let by = py - boxHeight - 42;
+    
+    // Evitar que estoure fora da tela
+    if (bx < 10) bx = 10;
+    if (bx + boxWidth > V_WIDTH + GameEngine.sceneManager.currentScene.cameraX - 10) {
+        bx = V_WIDTH + GameEngine.sceneManager.currentScene.cameraX - boxWidth - 10;
+    }
+    
+    if (isPanic) {
+        bx += (Math.random() - 0.5) * 4;
+        by += (Math.random() - 0.5) * 4;
+    }
+    
+    ctx.fillStyle = "rgba(4, 2, 12, 0.94)";
+    if (isPanic) {
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = 2.5;
+    } else {
+        ctx.strokeStyle = "#a855f7";
+        ctx.lineWidth = 1.8;
+    }
+    
+    ctx.beginPath();
+    let r = 4;
+    ctx.moveTo(bx + r, by);
+    ctx.lineTo(bx + boxWidth - r, by);
+    ctx.quadraticCurveTo(bx + boxWidth, by, bx + boxWidth, by + r);
+    ctx.lineTo(bx + boxWidth, by + boxHeight - r);
+    ctx.quadraticCurveTo(bx + boxWidth, by + boxHeight, bx + boxWidth - r, by + boxHeight);
+    
+    ctx.lineTo(px + 8, by + boxHeight);
+    ctx.lineTo(px, by + boxHeight + 8);
+    ctx.lineTo(px - 8, by + boxHeight);
+    
+    ctx.lineTo(bx + r, by + boxHeight);
+    ctx.quadraticCurveTo(bx, by + boxHeight, bx, by + boxHeight - r);
+    ctx.lineTo(bx, by + r);
+    ctx.quadraticCurveTo(bx, by, bx + r, by);
+    ctx.closePath();
+    
+    ctx.shadowColor = "rgba(0,0,0,0.85)";
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.stroke();
+    
+    ctx.fillStyle = isPanic ? "#f43f5e" : "#f8fafc";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    
+    for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], bx + paddingX, by + paddingY + i * lineHeight);
+    }
+    
+    ctx.restore();
+}
+
+// AVISO CONTEXTUAL DE INTERAÇÃO (NOVA MECÂNICA) - PARTE 1
+function drawInteractPrompt(ctx, player) {
+    let prop = player.nearbyProp;
+    if (!prop) return;
+    // Não mostrar enquanto digita pensamento longo nem durante QTE/segurar
+    if (GameState.qteActive || GameState.cutsceneActive) return;
+    if (player.holdTimer > 0) return;
+
+    let px = prop.x + prop.w / 2;
+    let py = prop.y - 14;
+    let pulse = 1.0 + Math.sin(performance.now() * 0.006) * 0.08;
+    let bobY = Math.sin(performance.now() * 0.005) * 3;
+
+    let label = Input.isMobile ? "AÇÃO" : "E";
+    let suffix = "EXAMINAR";
+
+    ctx.save();
+    ctx.translate(px, py + bobY);
+    ctx.scale(pulse, pulse);
+    ctx.font = "16px 'Special Elite'";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    let keyTxt = `[${label}]`;
+    let keyW = ctx.measureText(keyTxt).width;
+    let txtW = ctx.measureText(suffix).width;
+    let gap = 8;
+    let padX = 12;
+    let totalW = keyW + gap + txtW;
+    let boxW = totalW + padX * 2;
+    let boxH = 26;
+
+    // Cápsula de fundo
+    ctx.fillStyle = "rgba(8, 4, 18, 0.92)";
+    ctx.strokeStyle = "#a855f7";
+    ctx.lineWidth = 1.8;
+    ctx.shadowColor = "rgba(168, 85, 247, 0.6)";
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    let bx = -boxW / 2, by = -boxH / 2, r = 6;
+    ctx.moveTo(bx + r, by);
+    ctx.arcTo(bx + boxW, by, bx + boxW, by + boxH, r);
+    ctx.arcTo(bx + boxW, by + boxH, bx, by + boxH, r);
+    ctx.arcTo(bx, by + boxH, bx, by, r);
+    ctx.arcTo(bx, by, bx + boxW, by, r);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.stroke();
+
+    // Texto da tecla (destaque) + ação
+    let startX = -totalW / 2;
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#d8b4fe";
+    ctx.fillText(keyTxt, startX, 1);
+    ctx.fillStyle = "#f5f3ff";
+    ctx.fillText(suffix, startX + keyW + gap, 1);
+
+    // Setinha apontando para baixo (para o objeto)
+    ctx.fillStyle = "#a855f7";
+    ctx.beginPath();
+    ctx.moveTo(-5, boxH / 2);
+    ctx.lineTo(5, boxH / 2);
+    ctx.lineTo(0, boxH / 2 + 7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+}
+
+// BÚSSOLA PARA A SAÍDA (NOVA MECÂNICA) - aparece quando todos os objetivos terminam
+function drawExitCompass(ctx, player, exitX, exitY) {
+    let dx = exitX - player.pos.x;
+    let dy = exitY - player.pos.y;
+    let dist = Math.hypot(dx, dy);
+    if (dist < 90) return;
+    let ang = Math.atan2(dy, dx);
+    let radius = 38;
+    let ax = player.pos.x + Math.cos(ang) * radius;
+    let ay = player.pos.y + Math.sin(ang) * radius;
+    let glow = 0.6 + Math.sin(performance.now() * 0.008) * 0.4;
+
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.rotate(ang);
+    ctx.globalAlpha = glow;
+    ctx.fillStyle = "#34d399";
+    ctx.shadowColor = "#34d399";
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    ctx.moveTo(12, 0);
+    ctx.lineTo(-6, -7);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-6, 7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+}
+
+const ParticlePool = {
+    pool: [], maxSize: 800,
+    init() {
+        for(let i=0; i<this.maxSize; i++) {
+            this.pool.push({ active: false, x:0, y:0, vx:0, vy:0, size:0, growth:0, life:0, maxLife:0, type:0, r:255, g:255, b:255, a:1, angle:0, rotSpeed:0 });
+        }
+    },
+    spawn(x, y, type, cvx = 0, cvy = 0, customR=0, customG=0, customB=0) {
+        for(let i=0; i<this.maxSize; i++) {
+            let p = this.pool[i];
+            if(!p.active) {
+                p.active = true; p.x = x; p.y = y; p.type = type; p.life = 0; p.angle = Math.random()*Math.PI*2; p.rotSpeed = 0;
+                let ang = Math.random() * Math.PI * 2;
+                
+                if(type === 0) {
+                    p.vx = (Math.random() - 0.5) * 14; p.vy = (Math.random() - 0.5) * 10 - 5;
+                    p.size = 1.0 + Math.random() * 2.5; p.growth = -0.05; p.maxLife = 3.0 + Math.random() * 3; p.r = 200; p.g = 190; p.b = 170;
+                } else if(type === 1) {
+                    let spd = 5 + Math.random() * 10;
+                    p.vx = cvx + Math.cos(ang) * spd; p.vy = cvy + (Math.random() * -15);
+                    p.size = 8 + Math.random() * 14; p.growth = 12.0; p.maxLife = 2.4; p.r = 110; p.g = 112; p.b = 120; p.rotSpeed = (Math.random()-0.5)*0.15;
+                } else if(type === 2) {
+                    p.vx = (Math.random()-0.5)*75; p.vy = -45 - Math.random()*55; p.size = 2.0; p.growth = 4.0; p.maxLife = 0.35; p.r = 180; p.g = 200; p.b = 250;
+                } else if(type === 3) {
+                    p.vx = 0; p.vy = 0; p.size = 1; p.growth = 120.0; p.maxLife = 0.7; p.r = customR || 255; p.g = customG || 255; p.b = customB || 255;
+                } else if(type === 4) {
+                    p.vx = cvx + (Math.random() - 0.5) * 70; p.vy = -20 - Math.random() * 50;
+                    p.size = 2.0 + Math.random() * 3.0; p.growth = -3.5; p.maxLife = 0.5; p.r = 255; p.g = 100 + Math.floor(Math.random()*90); p.b = 10;
+                } else if(type === 5) {
+                    p.vx = -150 - Math.random() * 80; p.vy = 30 + Math.random() * 30;
+                    p.size = 7 + Math.random() * 5.0; p.growth = 0; p.maxLife = 4.5; p.rotSpeed = 2.5 + Math.random() * 5.0;
+                    p.r = 180 + Math.floor(Math.random()*75); p.g = 70 + Math.floor(Math.random()*40); p.b = 15;
+                }
+                break;
+            }
+        }
+    },
+    update(dt) {
+        for(let i=0; i<this.maxSize; i++) {
+            let p = this.pool[i]; if(!p.active) continue;
+            p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; p.angle += p.rotSpeed * dt;
+            
+            if(p.type === 0 || p.type === 1) { 
+                p.vx *= Math.exp(-0.5 * dt); p.vy *= Math.exp(-0.5 * dt); 
+                p.size += p.growth * dt; 
+            }
+            if(p.type === 2) p.vy += 350 * dt; 
+            if(p.type === 3) p.size += p.growth * dt; 
+            if(p.type === 4) {
+                p.vy += 180 * dt; 
+                p.size += p.growth * dt;
+            }
+            if(p.type === 5) {
+                p.vx += Math.sin(p.life * 6.0) * 25 * dt; 
+                p.vy += Math.cos(p.life * 3.0) * 15 * dt;
+            }
+            if(p.size <= 0.1 || p.life >= p.maxLife) p.active = false;
+        }
+    },
+    draw(ctx, cameraX = 0, cameraY = 0) {
+        for(let i=0; i<this.maxSize; i++) {
+            let p = this.pool[i]; if(!p.active) continue;
+            let alpha = 1.0 - (p.life / p.maxLife);
+            let dx = p.x - cameraX;
+            let dy = p.y - cameraY;
+            
+            if(p.type === 1) { 
+                ctx.globalAlpha = alpha * 0.16; ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+                ctx.beginPath(); ctx.arc(dx, dy, p.size, 0, Math.PI*2); ctx.fill();
+            } else if(p.type === 3) { 
+                ctx.globalAlpha = alpha * 0.45; ctx.strokeStyle = `rgba(${p.r},${p.g},${p.b},${alpha})`; ctx.lineWidth = 2.0;
+                ctx.beginPath(); ctx.ellipse(dx, dy, p.size, p.size * 0.35, 0, 0, Math.PI*2); ctx.stroke();
+            } else if(p.type === 4) { 
+                ctx.globalAlpha = alpha; ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+                ctx.shadowColor = `rgb(${p.r},${p.g},${p.b})`; ctx.shadowBlur = 10;
+                ctx.fillRect(dx, dy, p.size, p.size);
+                ctx.shadowBlur = 0;
+            } else if(p.type === 5) { 
+                ctx.save();
+                ctx.globalAlpha = alpha * 0.9;
+                ctx.translate(dx, dy);
+                ctx.rotate(p.angle);
+                ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+            } else { 
+                ctx.globalAlpha = alpha * 0.8; ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+                ctx.fillRect(dx - p.size/2, dy - p.size/2, p.size, p.size);
+            }
+        }
+        ctx.globalAlpha = 1.0;
+    }
+};
+
+const GhostPool = {
+    pool: [], maxSize: 30,
+    init() {
+        for(let i=0; i<this.maxSize; i++) this.pool.push({ active: false, x:0, y:0, alpha:0, facing:1, cloth:false, anim:0, state:0, heading: 'DOWN' });
+    },
+    spawn(x, y, facing, cloth, anim, state, heading) {
+        for(let i=0; i<this.maxSize; i++) {
+            let g = this.pool[i];
+            if(!g.active) {
+                g.active = true; g.x = x; g.y = y; g.facing = facing; g.cloth = cloth; g.anim = anim; g.state = state; g.heading = heading; g.alpha = 0.5;
+                break;
+            }
+        }
+    },
+    update(dt) {
+        for(let i=0; i<this.maxSize; i++) {
+            let g = this.pool[i]; if(!g.active) continue;
+            g.alpha -= dt * 2.0; if(g.alpha <= 0) g.active = false;
+        }
+    }
+};
+
+const GameState = {
+    tasks: { 
+        cloth: false, keys: false, coffee: false, radio: false, mirror: false, street: false,
+        clockHandFound: false, clockRepaired: false, safe: false, diaryCount: 0, gardenVisited: false
+    },
+    diariesCollected: new Set(),
+    panicLevel: 0.0, qteActive: false, qteProgress: 0, qteTarget: 0, cutsceneActive: false,
+    lastPanicState: false, glitchTimer: 0, glitchIntensity: 0,
+    rhythmTimer: 0, rhythmTargetRadius: 40, rhythmSuccessRadius: 40,
+    isPaused: false,
+    
+    checkHUD() {
+        if (this.tasks.cloth) { let e = document.getElementById('t1'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.keys) { let e = document.getElementById('t2'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.coffee) { let e = document.getElementById('t3'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.radio) { let e = document.getElementById('t4'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.mirror) { let e = document.getElementById('t5'); if(e) e.classList.add('task-complete'); }
+        // NOVAS TAREFAS HUD
+        if (this.tasks.clockRepaired) { let e = document.getElementById('t_clock'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.safe) { let e = document.getElementById('t_safe'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.gardenVisited) { let e = document.getElementById('t_garden'); if(e) e.classList.add('task-complete'); }
+        if (this.tasks.street) { let e = document.getElementById('t6'); if(e) e.classList.add('task-complete'); }
+    },
+    triggerPanicHUD(active) {
+        if (active === this.lastPanicState) return;
+        this.lastPanicState = active;
+    }
+};
+
+class Entity {
+    constructor(x, y, radius) {
+        this.pos = new Vector2(x, y); this.radius = radius;
+        this.animTimer = 0; this.state = 0; this.facing = 1;
+    }
+}
+
+class Player extends Entity {
+    constructor(x, y) {
+        super(x, y, 15);
+        this.vel = new Vector2();
+        this.accel = 3200;
+        this.friction = 18.0;
+        this.maxSpeed = 155;
+        this.stamina = 100; this.maxStamina = 100;
+        this.holdTimer = 0; this.maxHold = 1.0;
+        this.trailTime = 0; this.shakeOffset = 0; this.dustTimer = 0;
+        this.stepTimer = 0;
+        this.visible = true;
+        
+        this.heading = 'DOWN'; 
+
+        this.scarfLength = 4.5;
+        this.scarfPoints = [];
+        for (let i = 0; i < 5; i++) {
+            this.scarfPoints.push({ x: x, y: y, oldX: x, oldY: y });
+        }
+
+        this.hairAngle = 0; this.hairVelocity = 0; this.coatSway = 0;
+        this.blinkTimer = 0;
+        this.nearbyProp = null;
+        this.promptPulse = 0;
+    }
+
+    update(dt, obstacles, boundaries, interactionProps) {
+        if (!this.visible) return;
+        if (GameState.qteActive || GameState.cutsceneActive || GameState.isPaused) {
+            this.state = 3; this.vel.set(0, 0); this.animTimer += dt * 1.5; 
+            this.updateScarfPhysics(dt);
+            return;
+        }
+
+        let up = Input.isDown('arrowup') || Input.isDown('w') || Input.isDown('arrowup_m');
+        let down = Input.isDown('arrowdown') || Input.isDown('s') || Input.isDown('arrowdown_m');
+        let left = Input.isDown('arrowleft') || Input.isDown('a') || Input.isDown('arrowleft_m');
+        let right = Input.isDown('arrowright') || Input.isDown('d') || Input.isDown('arrowright_m');
+        
+        let isMoving = up || down || left || right;
+        let isExhausted = this.stamina < 15;
+
+        if (isExhausted) { this.maxSpeed = 80; this.accel = 1200; }
+        else if ((Input.isDown('shift') || Input.isMobile) && isMoving) { this.maxSpeed = 225 + (GameState.panicLevel * 30); this.accel = 3800; }
+        else { this.maxSpeed = 140; this.accel = 2800; }
+
+        let fx = 0, fy = 0;
+        if(up) fy -= this.accel; if(down) fy += this.accel;
+        if(left) fx -= this.accel; if(right) fx += this.accel;
+
+        if(fx !== 0 && fy !== 0) { fx *= 0.7071; fy *= 0.7071; }
+
+        this.vel.x += fx * dt; this.vel.y += fy * dt;
+        this.vel.x -= this.vel.x * this.friction * dt; this.vel.y -= this.vel.y * this.friction * dt;
+
+        let curSpeed = Math.sqrt(this.vel.x*this.vel.x + this.vel.y*this.vel.y);
+        if(curSpeed > this.maxSpeed) { this.vel.x = (this.vel.x/curSpeed)*this.maxSpeed; this.vel.y = (this.vel.y/curSpeed)*this.maxSpeed; }
+
+        if (isMoving) {
+            if (Math.abs(this.vel.y) > Math.abs(this.vel.x)) {
+                this.heading = this.vel.y < 0 ? 'UP' : 'DOWN';
+            } else {
+                this.heading = 'SIDE';
+                this.facing = this.vel.x > 0 ? 1 : -1;
+            }
+        }
+
+        if (isExhausted) { this.state = 5; }
+        else if (curSpeed > 160) { 
+            this.state = 2; this.stamina = Math.max(0, this.stamina - dt * 26);
+            this.trailTime += dt;
+            if(this.trailTime >= 0.05) {
+                GhostPool.spawn(this.pos.x, this.pos.y, this.facing, GameState.tasks.cloth, this.animTimer, this.state, this.heading);
+                this.trailTime = 0;
+            }
+        } else if (curSpeed > 15) { this.state = 1; }
+        else { this.state = 0; }
+
+        if ((!Input.isDown('shift') && !Input.isMobile) || !isMoving) {
+            let regen = GameState.panicLevel > 0.5 ? 12 : 40;
+            this.stamina = Math.min(this.maxStamina, this.stamina + dt * regen);
+        }
+
+        if (isMoving) {
+            this.stepTimer += curSpeed * dt;
+            let triggerDist = this.state === 2 ? 140 : 185;
+            if (this.stepTimer >= triggerDist) {
+                let terrain = 'wood';
+                if (boundaries.isRua) terrain = 'asphalt';
+                else if (this.pos.x > 1000 && this.pos.y > 500) terrain = 'carpet';
+                SoundSynth.playStep(terrain);
+                this.stepTimer = 0;
+            }
+        }
+
+        let targetHairAngle = (this.vel.x * -0.005) + Math.sin(this.animTimer * 2.5) * 0.05;
+        let hairDiff = targetHairAngle - this.hairAngle;
+        this.hairVelocity += hairDiff * 40 * dt;
+        this.hairVelocity *= Math.exp(-12 * dt); 
+        this.hairAngle += this.hairVelocity * dt;
+
+        this.coatSway = (curSpeed * 0.007) * Math.sin(this.animTimer * 9.0);
+
+        this.updateScarfPhysics(dt);
+
+        let nextX = this.pos.x + this.vel.x * dt;
+        let nextY = this.pos.y + this.vel.y * dt;
+
+        let canMoveX = true;
+        if (nextX < boundaries.minX || nextX > boundaries.maxX) canMoveX = false;
+        if (canMoveX) {
+            for (let obs of obstacles) {
+                if (nextX + this.radius > obs.x && nextX - this.radius < obs.x + obs.w &&
+                    this.pos.y + this.radius - 4 > obs.y && this.pos.y - this.radius + 4 < obs.y + obs.h) {
+                    canMoveX = false; break;
+                }
+            }
+        }
+        if (canMoveX) this.pos.x = nextX; else this.vel.x = 0;
+
+        let canMoveY = true;
+        if (nextY < boundaries.minY || nextY > boundaries.maxY) canMoveY = false;
+        if (canMoveY) {
+            for (let obs of obstacles) {
+                if (this.pos.x + this.radius - 4 > obs.x && this.pos.x - this.radius + 4 < obs.x + obs.w &&
+                    nextY + this.radius > obs.y && nextY - this.radius < obs.y + obs.h) {
+                    canMoveY = false; break;
+                }
+            }
+        }
+        if (canMoveY) this.pos.y = nextY; else this.vel.y = 0;
+
+        if(this.state === 1) this.animTimer += curSpeed * dt * 0.18;
+        else if(this.state === 2) this.animTimer += curSpeed * dt * 0.14;
+        else this.animTimer += dt * 3.5;
+
+        this.blinkTimer += dt;
+        if (this.blinkTimer > 4.5) {
+            if (this.blinkTimer > 4.65) this.blinkTimer = 0;
+        }
+
+        let nearAny = false;
+        this.nearbyProp = null;
+        if (interactionProps) {
+            let interactTriggered = Input.isDown('e') || Input.isDown('action_m') || Input.isDown(' ');
+            for (let i = 0; i < interactionProps.length; i++) {
+                let prop = interactionProps[i];
+                if (this.pos.x > prop.x - 55 && this.pos.x < prop.x + prop.w + 55 &&
+                    this.pos.y > prop.y - 45 && this.pos.y < prop.y + prop.h + 55) {
+                    nearAny = true;
+                    this.nearbyProp = prop;
+                    if(interactTriggered) {
+                        if(this.state !== 3 && this.state !== 5) this.state = 3;
+                        this.shakeOffset = Math.sin(this.animTimer * 12) * 2.0;
+                        prop.interact(this, dt); 
+                    } else {
+                        this.holdTimer = 0;
+                    }
+                    break;
+                }
+            }
+        }
+        if(!nearAny) { this.holdTimer = 0; this.shakeOffset = 0; }
+    }
+
+    updateScarfPhysics(dt) {
+        let neckX = this.pos.x;
+        let neckY = this.pos.y - 7;
+        
+        if (this.heading === 'UP') {
+            neckY = this.pos.y - 8;
+        } else if (this.heading === 'SIDE') {
+            neckX = this.pos.x - (3 * this.facing);
+            neckY = this.pos.y - 6;
+        }
+
+        this.scarfPoints[0].x = neckX;
+        this.scarfPoints[0].y = neckY;
+
+        let forceX = -this.vel.x * 0.085;
+        let forceY = -this.vel.y * 0.085 + 40; 
+
+        for (let i = 1; i < this.scarfPoints.length; i++) {
+            let p = this.scarfPoints[i];
+            let tempX = p.x;
+            let tempY = p.y;
+
+            p.x += (p.x - p.oldX) * 0.88 + forceX * dt;
+            p.y += (p.y - p.oldY) * 0.88 + forceY * dt;
+
+            p.oldX = tempX;
+            p.oldY = tempY;
+        }
+
+        for (let r = 0; r < 5; r++) { 
+            for (let i = 1; i < this.scarfPoints.length; i++) {
+                let p1 = this.scarfPoints[i - 1];
+                let p2 = this.scarfPoints[i];
+
+                let dx = p2.x - p1.x;
+                let dy = p2.y - p1.y;
+                let dist = Math.hypot(dx, dy);
+                let targetDist = this.scarfLength;
+
+                if (dist > 0.01) {
+                    let diff = targetDist - dist;
+                    let percent = (diff / dist) * 0.5;
+                    let offsetX = dx * percent;
+                    let offsetY = dy * percent;
+
+                    if (i > 1) { 
+                        p1.x -= offsetX;
+                        p1.y -= offsetY;
+                    }
+                    p2.x += offsetX;
+                    p2.y += offsetY;
+                }
+            }
+        }
+    }
+
+    draw(ctx, cameraX = 0, cameraY = 0, reflex = false, ghostAlpha = 1.0) {
+        if (!this.visible) return;
+        ctx.save();
+        let dx = this.pos.x - cameraX + (this.state === 3 ? this.shakeOffset : 0);
+        let dy = this.pos.y - cameraY;
+
+        if (reflex) {
+            ctx.translate(dx, dy + 28); 
+            ctx.scale(this.facing, -0.62); 
+            ctx.globalAlpha = 0.20 + Math.sin(this.animTimer * 5.0)*0.05;
+        } else {
+            ctx.translate(dx, dy); 
+            ctx.globalAlpha = ghostAlpha;
+            ctx.fillStyle = "rgba(4, 1, 12, 0.45)"; ctx.beginPath(); ctx.ellipse(0, 11, 13, 5.0, 0, 0, Math.PI*2); ctx.fill();
+        }
+
+        let bob = 0, sx = 1, sy = 1, tilt = 0;
+        if (this.state === 1) { 
+            bob = Math.abs(Math.sin(this.animTimer)) * -3.0; sx = 1.03; sy = 0.97; tilt = 0.02;
+        } else if (this.state === 2) { 
+            bob = Math.abs(Math.sin(this.animTimer)) * -5.8; sx = 1.10; sy = 0.90; tilt = 0.14;
+        } else if (this.state === 4) { 
+            sx = 1.20; sy = 0.80; bob = 2.0;
+        } else if (this.state === 5) { 
+            let pant = Math.sin(this.animTimer * 4.5);
+            sy = 0.90 + pant * 0.04; sx = 1.04 - pant * 0.02; bob = pant * 1.2; 
+        } else { 
+            sy = 1.0 + Math.sin(this.animTimer) * 0.025; sx = 1.0 - Math.sin(this.animTimer) * 0.012;
+        }
+
+        ctx.scale(sx, sy);
+        if (tilt !== 0 && !reflex) ctx.rotate(tilt);
+
+        ctx.fillStyle = "#020305";
+        let legWalk = Math.sin(this.animTimer) * 6.5;
+        if (this.state === 0 || this.state === 5) legWalk = 0;
+        
+        ctx.fillStyle = "#090514"; 
+        
+        if (this.heading === 'UP') {
+            ctx.fillRect(-4.5, 8 + legWalk*0.2, 3.0, 6.0);
+            ctx.fillRect(1.5, 8 - legWalk*0.2, 3.0, 6.0);
+        } else if (this.heading === 'SIDE') {
+            let leftLegOffset = legWalk * 0.25 * this.facing;
+            ctx.fillRect(-3.5 + leftLegOffset, 8, 3.0, 6.0);
+            ctx.fillRect(-1.5 - leftLegOffset, 8, 3.0, 6.0);
+        } else { 
+            ctx.fillRect(-5.0, 8 + legWalk*0.2, 3.2, 6.0);
+            ctx.fillRect(1.5, 8 - legWalk*0.2, 3.2, 6.0);
+        }
+
+        ctx.fillStyle = "#160721";
+        ctx.fillRect(-5.5, 12, 3.5, 2.5);
+        ctx.fillRect(1.5, 12, 3.5, 2.5);
+
+        let primaryColor = GameState.tasks.cloth ? "#1e3a8a" : "#991b1b"; 
+        let secondaryColor = GameState.tasks.cloth ? "#172554" : "#4c0505";
+
+        let coatGrad = ctx.createLinearGradient(0, -6 + bob, 0, 8.5);
+        coatGrad.addColorStop(0, primaryColor);
+        coatGrad.addColorStop(1, secondaryColor);
+        
+        ctx.fillStyle = coatGrad;
+
+        if (this.heading === 'UP') {
+            ctx.beginPath(); 
+            ctx.moveTo(-10, -6 + bob); 
+            ctx.lineTo(10, -6 + bob); 
+            ctx.lineTo(8.5, 9.5);
+            ctx.lineTo(-8.5 + this.coatSway * 1.2, 9.5); 
+            ctx.closePath(); 
+            ctx.fill();
+        } else if (this.heading === 'SIDE') {
+            ctx.beginPath();
+            ctx.moveTo(-7 * this.facing, -6 + bob);
+            ctx.lineTo(8 * this.facing, -6 + bob);
+            ctx.lineTo(5 * this.facing, 9.0);
+            ctx.lineTo((-7 + this.coatSway * 1.5) * this.facing, 9.0);
+            ctx.closePath();
+            ctx.fill();
+        } else { 
+            ctx.beginPath(); 
+            ctx.moveTo(-9.5, -6 + bob); 
+            ctx.lineTo(9.5, -6 + bob); 
+            ctx.lineTo(7.5, 8.5);
+            ctx.lineTo(-7.5 + this.coatSway, 8.5); 
+            ctx.closePath(); 
+            ctx.fill();
+
+            ctx.fillStyle = "#fbbf24"; 
+            ctx.fillRect(-2.5, -2 + bob, 1.5, 1.5);
+            ctx.fillRect(-2.5, 2.0 + bob, 1.5, 1.5);
+            ctx.fillRect(1.5, -2 + bob, 1.5, 1.5);
+            ctx.fillRect(1.5, 2.0 + bob, 1.5, 1.5);
+        }
+
+        ctx.fillStyle = GameState.tasks.cloth ? "#1e1b4b" : "#3b0712";
+        ctx.fillRect(-7, -6 + bob, 14, 2.5);
+
+        ctx.save();
+        
+        ctx.fillStyle = "#ec4899"; 
+        if (this.heading === 'UP') {
+            ctx.fillRect(-6.5, -7.5 + bob, 13, 3.5);
+        } else if (this.heading === 'SIDE') {
+            ctx.fillRect(-5.0 * this.facing, -7.0 + bob, 10.0, 3.5);
+        } else { 
+            ctx.fillRect(-6.0, -7.0 + bob, 12.0, 3.5);
+        }
+
+        ctx.beginPath();
+        ctx.lineWidth = 4.2;
+        ctx.strokeStyle = "#ec4899";
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        let startP = this.scarfPoints[0];
+        ctx.moveTo(startP.x - this.pos.x, startP.y - this.pos.y + bob);
+
+        for (let i = 1; i < this.scarfPoints.length; i++) {
+            let p = this.scarfPoints[i];
+            ctx.lineTo(p.x - this.pos.x, p.y - this.pos.y + bob);
+        }
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = "#db2777"; 
+        ctx.moveTo(startP.x - this.pos.x, startP.y - this.pos.y + bob);
+        for (let i = 1; i < this.scarfPoints.length; i++) {
+            let p = this.scarfPoints[i];
+            ctx.lineTo(p.x - this.pos.x + 0.5, p.y - this.pos.y + bob);
+        }
+        ctx.stroke();
+
+        ctx.restore();
+
+        if (this.heading === 'UP') {
+            ctx.fillStyle = "#2d1607"; 
+            ctx.fillRect(-5.0, -15.5 + bob, 10, 11);
+            
+            ctx.fillStyle = "#1c0d05";
+            ctx.fillRect(-5.5, -4.5 + bob, 11, 10); 
+        } else {
+            ctx.fillStyle = "#fbe5d6"; 
+            ctx.fillRect(-4.5, -15.5 + bob, 9, 10); 
+
+            ctx.fillStyle = "#991b1b";
+            if (this.heading === 'SIDE') {
+                ctx.fillRect(2.0 * this.facing, -9 + bob, 1.2 * this.facing, 0.8);
+            } else {
+                ctx.fillRect(-1.5, -9 + bob, 3.0, 0.8);
+            }
+
+            ctx.save();
+            ctx.translate(-2.0, -14.5 + bob);
+            ctx.rotate(this.hairAngle);
+            ctx.fillStyle = "#2d1607"; 
+            ctx.fillRect(-3.5, 0, 8.5, 5.0); 
+            ctx.fillRect(-4.5, 3.5, 5.5, 11); 
+            ctx.fillRect(0.5, 3.5, 4.0, 7); 
+            ctx.restore();
+            
+            let eyeIsOpen = (this.blinkTimer < 4.5);
+            if (eyeIsOpen) {
+                let eyeColor = (GameState.panicLevel > 0.5) ? "#f43f5e" : "#a855f7";
+                ctx.fillStyle = eyeColor;
+                if (this.heading === 'SIDE') {
+                    ctx.fillRect(2.0 * this.facing, -11.5 + bob, 1.8 * this.facing, 2.0); 
+                } else {
+                    ctx.fillRect(-2.5, -11.5 + bob, 2.0, 2.0); 
+                    ctx.fillRect(1.5, -11.5 + bob, 2.0, 2.0); 
+                }
+            } else {
+                ctx.fillStyle = "#1e110d";
+                if (this.heading === 'SIDE') {
+                    ctx.fillRect(2.0 * this.facing, -11 + bob, 1.8 * this.facing, 1.0); 
+                } else {
+                    ctx.fillRect(-2.5, -11 + bob, 2.0, 1.0); 
+                    ctx.fillRect(1.5, -11 + bob, 2.0, 1.0); 
+                }
+            }
+        }
+
+        if (GameState.panicLevel > 0.45 && !reflex && this.heading !== 'UP') {
+            ctx.save();
+            ctx.globalCompositeOperation = "screen";
+            let fGrad = ctx.createRadialGradient(3, -10+bob, 1, 40, -10+bob, 80);
+            fGrad.addColorStop(0, "rgba(168, 85, 247, 0.4)");
+            fGrad.addColorStop(1, "rgba(168, 85, 247, 0)");
+            ctx.fillStyle = fGrad;
+            ctx.beginPath(); ctx.moveTo(3, -10+bob); ctx.lineTo(75, -32+bob); ctx.lineTo(75, 12+bob);
+            ctx.closePath(); ctx.fill();
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+}
+
+class Car {
+    constructor(x, y, w, h, baseSpeed, colorHex) {
+        this.x = x; this.y = y; this.w = w; this.h = h;
+        this.baseSpeed = baseSpeed; this.speed = baseSpeed; this.color = colorHex;
+        this.braking = false; this.hornVisualTimer = 0;
+        this.tiltY = 0; this.suspensionTimer = 0;
+        this.lightTexture = TextureCache.sedanLight;
+    }
+    update(dt, player) {
+        let pDistX = player.pos.x - (this.x + this.w/2);
+        let pDistY = Math.abs(player.pos.y - (this.y + this.h/2));
+        let isAhead = (this.baseSpeed > 0) ? (pDistX > 0 && pDistX < 260) : (pDistX < 0 && pDistX > -260);
+        let danger = isAhead && pDistY < 40;
+
+        this.suspensionTimer += dt * (Math.abs(this.speed) * 0.14);
+
+        if (danger && player.pos.y > 200 && player.pos.y < 500) {
+            this.braking = true;
+            this.speed -= (this.baseSpeed * 3.8) * dt;
+            if ((this.baseSpeed > 0 && this.speed < 0) || (this.baseSpeed < 0 && this.speed > 0)) this.speed = 0;
+            
+            if (Math.random() < 0.6 && Math.abs(this.speed) > 1.0) {
+                let tx = this.baseSpeed > 0 ? this.x + 12 : this.x + this.w - 12;
+                ParticlePool.spawn(tx, this.y + this.h - 2, 4, -this.speed * 22, -18);
+            }
+            
+            this.hornVisualTimer += dt;
+            if (this.hornVisualTimer >= 0.12) {
+                let hx = this.baseSpeed > 0 ? this.x + this.w : this.x;
+                ParticlePool.spawn(hx, this.y + this.h/2, 3, 0, 0, 168, 85, 247);
+                this.hornVisualTimer = 0;
+            }
+            this.tiltY = (this.baseSpeed > 0) ? 2.5 : -2.5;
+        } else {
+            this.braking = false;
+            this.tiltY *= Math.exp(-7.0 * dt);
+            this.speed += (this.baseSpeed - this.speed) * 2.2 * dt;
+        }
+
+        this.x += this.speed * 60 * dt;
+
+        if (Math.abs(this.speed) > 1.0 && Math.random() < 0.18) {
+            let ex = this.baseSpeed > 0 ? this.x : this.x + this.w;
+            ParticlePool.spawn(ex, this.y + this.h - 5, 1, -this.speed * 9, -6);
+        }
+
+        if(this.speed > 0 && this.x > 1680) { this.x = -180; this.speed = this.baseSpeed; }
+        if(this.speed < 0 && this.x < -180) { this.x = 1680; this.speed = this.baseSpeed; }
+    }
+    
+    draw(ctx, cameraX, cameraY) {
+        let cx = this.x - cameraX;
+        let cy = this.y - cameraY;
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        if(this.baseSpeed > 0) {
+            ctx.translate(cx + this.w, cy + this.h/2 + this.tiltY);
+            ctx.drawImage(this.lightTexture, -5, -this.lightTexture.height/2);
+        } else {
+            ctx.translate(cx, cy + this.h/2 + this.tiltY);
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.lightTexture, -5, -this.lightTexture.height/2);
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(cx, cy + this.tiltY);
+        
+        ctx.fillStyle = "rgba(1, 1, 3, 0.7)";
+        ctx.fillRect(-6, this.h - 3, this.w + 12, 4);
+
+        let carGrad = ctx.createLinearGradient(0, 0, 0, this.h);
+        carGrad.addColorStop(0, this.color);
+        carGrad.addColorStop(1, "#010103");
+        ctx.fillStyle = carGrad;
+        ctx.fillRect(0, 0, this.w, this.h);
+
+        ctx.fillStyle = "rgba(186, 230, 253, 0.18)";
+        if(this.baseSpeed > 0) {
+            ctx.fillRect(this.w - 32, 4, 15, this.h - 8);
+        } else {
+            ctx.fillRect(17, 4, 15, this.h - 8);
+        }
+
+        ctx.fillStyle = "#000";
+        let rotOffset = Math.sin(this.suspensionTimer) * 1.8;
+        ctx.fillRect(15 + rotOffset, -1.5, 12, 3); ctx.fillRect(15 + rotOffset, this.h - 1.5, 12, 3);
+        ctx.fillRect(this.w - 27 + rotOffset, -1.5, 12, 3); ctx.fillRect(this.w - 27 + rotOffset, this.h - 1.5, 12, 3);
+
+        ctx.fillStyle = this.braking ? "#ff0000" : "#7f1d1d";
+        if(this.baseSpeed > 0) { 
+            ctx.fillRect(0, 3, 3, 6); ctx.fillRect(0, this.h - 9, 3, 6); 
+        } else { 
+            ctx.fillRect(this.w - 3, 3, 3, 6); ctx.fillRect(this.w - 3, this.h - 9, 3, 6); 
+        }
+        ctx.restore();
+    }
+}
+
+class WeatherSystem {
+    constructor(worldWidth, worldHeight = 1000) {
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+        this.rainDrops = [];
+        this.maxDrops = 350;
+        for(let i = 0; i < this.maxDrops; i++) {
+            this.rainDrops.push({
+                x: Math.random() * this.worldWidth,
+                y: Math.random() * -this.worldHeight,
+                speed: 520 + Math.random() * 250,
+                length: 16 + Math.random() * 20
+            });
+        }
+    }
+    update(dt, boundaries) {
+        for(let i = 0; i < this.maxDrops; i++) {
+            let drop = this.rainDrops[i];
+            drop.y += drop.speed * dt;
+            drop.x -= 140 * dt; 
+
+            let limitY = boundaries.isRua ? (160 + Math.random() * 380) : 980;
+            if (drop.y > limitY) {
+                if (Math.random() < 0.18) {
+                    ParticlePool.spawn(drop.x, drop.y, 2); 
+                }
+                if (Math.random() < 0.05) {
+                    ParticlePool.spawn(drop.x, drop.y, 3, 0, 0, 160, 200, 255); 
+                }
+                drop.y = Math.random() * -120;
+                drop.x = Math.random() * this.worldWidth;
+            }
+        }
+    }
+    draw(ctx, cameraX, cameraY) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(175, 210, 255, 0.35)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for(let i = 0; i < this.maxDrops; i++) {
+            let drop = this.rainDrops[i];
+            let rx = drop.x - cameraX;
+            let ry = drop.y - cameraY;
+            if (rx > -50 && rx < V_WIDTH + 50 && ry > -50 && ry < V_HEIGHT + 50) {
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx - 4, ry + drop.length);
+            }
+        }
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+class SceneQuarto {
+    constructor(manager) {
+        this.manager = manager; 
+        this.player = new Player(180, 220);
+        
+        // Mapa expandido com novos limites e mais espaço explorável de casarão
+        this.boundaries = { minX: 45, maxX: 1555, minY: 110, maxY: 945, isRua: false };
+        this.cameraX = 0; this.cameraY = 0;
+        
+        this.thunderTimer = 8.0;
+        this.thunderActive = false;
+        this.thunderAlpha = 0;
+
+        // Obstáculos do mapa reorganizados para incluir ESCRITÓRIO e ESTUFA/JARDIM
+        this.obstacles = [
+            { x: 0, y: 0, w: 1600, h: 100 }, 
+            { x: 500, y: 100, w: 40, h: 180 },  
+            { x: 500, y: 390, w: 40, h: 140 },  
+            { x: 500, y: 640, w: 40, h: 360 },  
+            { x: 1000, y: 100, w: 40, h: 220 }, 
+            { x: 1000, y: 430, w: 40, h: 140 }, 
+            { x: 1000, y: 680, w: 40, h: 320 }, 
+            { x: 50, y: 500, w: 450, h: 40 }, 
+            { x: 1040, y: 500, w: 410, h: 40 }, 
+            { x: 110, y: 110, w: 110, h: 65 },  
+            { x: 45, y: 210, w: 20, h: 80 },    
+            { x: 430, y: 110, w: 70, h: 55 },   
+            { x: 260, y: 110, w: 120, h: 110 }, 
+            { x: 60, y: 540, w: 70, h: 50 },    
+            { x: 60, y: 820, w: 120, h: 70 },   
+            { x: 1090, y: 110, w: 100, h: 60 }, 
+            { x: 1260, y: 220, w: 120, h: 80 }, 
+            { x: 1120, y: 610, w: 80, h: 55 },  
+            { x: 1350, y: 610, w: 60, h: 50 },  
+            { x: 1150, y: 800, w: 150, h: 65 },
+            // Novas paredes estruturais para a Estufa e Escritório
+            { x: 1300, y: 500, w: 30, h: 200 }
+        ];
+
+        this.doorways = [
+            { x: 500, y: 280, w: 40, h: 110 }, 
+            { x: 500, y: 530, w: 40, h: 110 }, 
+            { x: 1000, y: 320, w: 40, h: 110 }, 
+            { x: 1000, y: 570, w: 40, h: 110 }, 
+            { x: 1450, y: 500, w: 110, h: 40 }  
+        ];
+
+        this.props = [
+            {
+                name: "wardrobe", x: 110, y: 110, w: 110, h: 65, color: "#22100a",
+                interact(p, dt) {
+                    if (GameState.tasks.cloth) return;
+                    p.holdTimer += dt; 
+                    NarrativeSystem.setThought("Raquel: 'Esse sobretudo escuro de lã... Ricardo dizia que ele me deixava inacessível. Exatamente como me sinto hoje.'");
+                    if(p.holdTimer >= p.maxHold) { 
+                        GameState.tasks.cloth = true; GameState.checkHUD(); 
+                        NarrativeSystem.setThought("Vesti o sobretudo de lã azulada. Um escudo protetor contra o passado."); 
+                    }
+                }
+            },
+            {
+                name: "mirror", x: 45, y: 210, w: 20, h: 80, color: "#93c5fd",
+                interact(p, dt) {
+                    if (!GameState.tasks.mirror && !GameState.qteActive) {
+                        GameState.qteActive = true; 
+                        GameState.rhythmTimer = 0;
+                        GameState.qteProgress = 0; 
+                        GameState.qteTarget = 5; 
+                        NarrativeSystem.setThought("[COLAPSO PSÍQUICO] Respire... Toque na tela quando o círculo roxo pulsar perfeitamente!", false);
+                    }
+                }
+            },
+            {
+                name: "nightstand", x: 430, y: 110, w: 70, h: 55, color: "#2d1a10",
+                interact(p, dt) {
+                    LoreSystem.open("envelope");
+                }
+            },
+            {
+                name: "sink", x: 60, y: 540, w: 70, h: 50, color: "#334155",
+                interact(p, dt) {
+                    if (GameState.tasks.keys) return;
+                    p.holdTimer += dt;
+                    NarrativeSystem.setThought("Raquel: 'Vasculhando a bancada úmida... Onde Ricardo teria colocado minhas chaves de latão?'");
+                    if(p.holdTimer >= p.maxHold) {
+                        GameState.tasks.keys = true; GameState.checkHUD();
+                        NarrativeSystem.setThought("Chaves de latão recuperadas. O toque do metal gelado que abre portas.");
+                    }
+                }
+            },
+            {
+                name: "stove", x: 1090, y: 110, w: 100, h: 60, color: "#1e293b",
+                interact(p, dt) {
+                    if (GameState.tasks.coffee) return;
+                    p.holdTimer += dt;
+                    NarrativeSystem.setThought("Raquel: 'Preparando um café amargo. Preciso de lucidez para resistir aos olhares de Ricardo.'");
+                    if(p.holdTimer >= p.maxHold) {
+                        GameState.tasks.coffee = true; GameState.checkHUD();
+                        NarrativeSystem.setThought("Tomei o café quente. Amargo e estimulante. A névoa recua.");
+                    }
+                }
+            },
+            {
+                name: "kitchenTable", x: 1260, y: 220, w: 120, h: 80, color: "#452516",
+                interact(p, dt) {
+                    LoreSystem.open("oldPhoto");
+                }
+            },
+            {
+                name: "recordPlayer", x: 1120, y: 610, w: 80, h: 55, color: "#54260d",
+                interact(p, dt) {
+                    if (GameState.tasks.radio) return;
+                    p.holdTimer += dt;
+                    NarrativeSystem.setThought("Raquel: 'A vitrola insiste em Chopin. A música paira no casarão como estática pura.'");
+                    if(p.holdTimer >= p.maxHold) {
+                        GameState.tasks.radio = true; GameState.checkHUD();
+                        NarrativeSystem.setThought("Girei a chave. Silenciei a vitrola. Mas a melodia continua ecoando no peito.");
+                    }
+                }
+            },
+            {
+                name: "telephone", x: 1350, y: 610, w: 60, h: 50, color: "#050508",
+                interact(p, dt) {
+                    LoreSystem.open("letter");
+                }
+            },
+            
+            // ==========================================
+            // NOVOS PROPS INTERATIVOS (PUZZLES & LORE)
+            // ==========================================
+            
+            // 1. Relógio de Pêndulo (Sala) - Exige ponteiro escondido para ser consertado
+            {
+                name: "grandfatherClock", x: 850, y: 820, w: 50, h: 80, color: "#451a03",
+                interact(p, dt) {
+                    if (GameState.tasks.clockRepaired) {
+                        NarrativeSystem.setThought("O Relógio de Pêndulo está consertado e fixado em 18:30, como pedia a partitura.");
+                        return;
+                    }
+                    if (GameState.tasks.clockHandFound) {
+                        p.holdTimer += dt;
+                        NarrativeSystem.setThought("Encaixando o ponteiro de minutos no mostrador dourado do relógio...");
+                        if (p.holdTimer >= p.maxHold) {
+                            GameState.tasks.clockRepaired = true;
+                            GameState.checkHUD();
+                            NarrativeSystem.setThought("O relógio deu corda. O pêndulo voltou a bater. Os ponteiros marcaram 18:30 de forma automática! Um clique metálico ecoou no cofre secreto.");
+                            audioPart2.playTone(330, 0.5, 'sine', 0.15);
+                        }
+                    } else {
+                        NarrativeSystem.setThought("O relógio de pêndulo está quebrado e parou. Falta o ponteiro dos minutos para ajustar o tempo. Talvez esteja guardado em alguma gaveta de móvel.");
+                    }
+                }
+            },
+            
+            // 2. Gaveta de Utilidades da Cozinha (Cozinha) - Guarda o ponteiro do relógio
+            {
+                name: "kitchenDrawer", x: 1420, y: 110, w: 60, h: 50, color: "#1e1b4b",
+                interact(p, dt) {
+                    if (GameState.tasks.clockHandFound) {
+                        NarrativeSystem.setThought("Apenas talheres enferrujados e papéis sem utilidade nesta gaveta.");
+                        return;
+                    }
+                    p.holdTimer += dt;
+                    NarrativeSystem.setThought("Revirando a gaveta trancada da cozinha...");
+                    if (p.holdTimer >= p.maxHold) {
+                        GameState.tasks.clockHandFound = true;
+                        NarrativeSystem.setThought("Encontrei o Ponteiro dourado de Bronze do relógio de pêndulo! Estava sob cartas antigas.");
+                        audioPart2.playTone(440, 0.25, 'sine', 0.1);
+                    }
+                }
+            },
+            
+            // 3. Quadro Rasgado / Cofre de Parede (Escritório) - O Cofre misterioso
+            {
+                name: "hiddenSafe", x: 740, y: 110, w: 80, h: 45, color: "#065f46",
+                interact(p, dt) {
+                    if (GameState.tasks.safe) {
+                        NarrativeSystem.setThought("O cofre de parede atrás do quadro está aberto. Ricardo guardava cópias de chaves aqui.");
+                        return;
+                    }
+                    if (!GameState.tasks.clockRepaired) {
+                        NarrativeSystem.setThought("Raquel: 'Há um cofre eletrônico de metal pesado oculto sob este quadro rasgado. O visor digital está desligado. Parece que a energia dele é controlada pelo sistema do relógio.'");
+                    } else {
+                        SafePuzzle.open();
+                    }
+                }
+            },
+
+            // 4. Estufa de Rosas Negras (Jardim de Inverno) - Ativa a visita ao jardim
+            {
+                name: "winterGardenPlants", x: 1420, y: 760, w: 100, h: 80, color: "#064e3b",
+                interact(p, dt) {
+                    if (!GameState.tasks.gardenVisited) {
+                        GameState.tasks.gardenVisited = true;
+                        GameState.checkHUD();
+                        NarrativeSystem.setThought("A estufa abandonada... Rosas secas e vinhas que sobem pelas colunas. Ricardo costumava colher espinhos aqui para ferir as minhas palavras.");
+                        audioPart2.playTone(280, 0.4, 'sine', 0.12);
+                    } else {
+                        NarrativeSystem.setThought("O mofo e as rosas morrem juntos na estufa abandonada.");
+                    }
+                }
+            },
+
+            // 5. Baú Velho de Couro (Jardim de Inverno) - Guarda o fragmento de diário 4
+            {
+                name: "oldChest", x: 1510, y: 880, w: 40, h: 40, color: "#451a03",
+                interact(p, dt) {
+                    LoreSystem.open("diary4");
+                }
+            },
+
+            // 6. Mesa do Escritório (Escritório) - Diário fragmento 1
+            {
+                name: "officeDesk", x: 620, y: 740, w: 90, h: 60, color: "#3f1a04",
+                interact(p, dt) {
+                    LoreSystem.open("diary1");
+                }
+            },
+
+            // 7. Prateleiras Antigas (Corredor Central) - Diário fragmento 2
+            {
+                name: "hallwayShelf", x: 550, y: 440, w: 60, h: 40, color: "#1e1b4b",
+                interact(p, dt) {
+                    LoreSystem.open("diary2");
+                }
+            },
+
+            // 8. Poltrona Velha (Sala de Visitas) - Diário fragmento 3
+            {
+                name: "oldArmchair", x: 1100, y: 880, w: 50, h: 50, color: "#7f1d1d",
+                interact(p, dt) {
+                    LoreSystem.open("diary3");
+                }
+            }
+        ];
+        
+        let triggerPulse = () => {
+            if (!GameState.qteActive || GameState.isPaused || CURRENT_GAME_PART !== 1) return;
+            let currentRadius = GameState.rhythmTimer * 75;
+            let okMin = GameState.rhythmTargetRadius - 12;
+            let okMax = GameState.rhythmTargetRadius + 12;
+            
+            if (currentRadius >= okMin && currentRadius <= okMax) {
+                GameState.qteProgress++;
+                ParticlePool.spawn(this.player.pos.x, this.player.pos.y - 12, 3, 0, 0, 168, 85, 247); 
+                if (GameState.qteProgress >= GameState.qteTarget) {
+                    GameState.qteActive = false; 
+                    GameState.tasks.mirror = true; 
+                    GameState.checkHUD();
+                    NarrativeSystem.setThought("Raquel: 'Eu me fitei demoradamente no reflexo trincado. O tempo e as cicatrizes estão lá, mas eu sou mais forte para enfrentá-lo hoje.'");
+                } else {
+                    GameState.rhythmTimer = 0;
+                }
+            } else {
+                GameState.qteProgress = Math.max(0, GameState.qteProgress - 1);
+                ParticlePool.spawn(this.player.pos.x, this.player.pos.y - 12, 3, 0, 0, 244, 63, 94);
+                GameState.rhythmTimer = 0;
+            }
+        };
+
+        window.addEventListener('keydown', (e) => { if (e.key === " " && CURRENT_GAME_PART === 1) triggerPulse(); });
+        window.addEventListener('pointerdown', (e) => {
+            if (CURRENT_GAME_PART !== 1) return;
+            if (e.target.closest('#mobile-joystick') || e.target.closest('#mobile-actions') || e.target.closest('#lore-overlay') || e.target.closest('#settings-overlay') || e.target.closest('#pause-trigger-btn') || e.target.closest('#tasks-trigger-btn') || e.target.closest('#task-panel') || e.target.closest('#safe-input-overlay')) return;
+            triggerPulse();
+        });
+    }
+
+    onEnter() { 
+        NarrativeSystem.setThought("Ricardo implorou que eu o visse uma última vez... Para vermos o pôr do sol no velho cemitério de Santa Maria. Preciso examinar o casarão antes de partir."); 
+    }
+
+    update(dt) {
+        if(LoreSystem.active || GameState.isPaused) return;
+
+        this.thunderTimer -= dt;
+        if (this.thunderTimer <= 0) {
+            this.thunderActive = true;
+            this.thunderAlpha = 1.0;
+            this.thunderTimer = 10 + Math.random() * 15;
+            SoundSynth.triggerThunder();
+        }
+
+        if (this.thunderActive) {
+            this.thunderAlpha -= dt * 2.5;
+            if (this.thunderAlpha <= 0) {
+                this.thunderActive = false;
+                this.thunderAlpha = 0;
+            }
+        }
+
+        this.player.update(dt, this.obstacles, this.boundaries, this.props);
+        
+        let targetCamX = this.player.pos.x - V_WIDTH/2;
+        let targetCamY = this.player.pos.y - V_HEIGHT/2;
+        this.cameraX += (targetCamX - this.cameraX) * 0.08;
+        this.cameraY += (targetCamY - this.cameraY) * 0.08;
+        
+        this.cameraX = Math.max(0, Math.min(1600 - V_WIDTH, this.cameraX));
+        this.cameraY = Math.max(0, Math.min(1000 - V_HEIGHT, this.cameraY));
+
+        let distToVinyl = Math.hypot(this.player.pos.x - 1160, this.player.pos.y - 635);
+        SoundSynth.updateRadioVolume(distToVinyl);
+        
+        let heartBPM = 60 + Math.max(0, (1 - (distToVinyl / 600)) * 40);
+        if (GameState.qteActive) heartBPM = 100;
+        SoundSynth.playHeartbeat(heartBPM);
+
+        // Tensão sutil no casarão: sobe perto da vitrola e no espelho; mantida abaixo do limiar de pânico pleno
+        let targetTension = Math.max(0, (1 - distToVinyl / 600)) * 0.16;
+        if (GameState.qteActive) targetTension = 0.3;
+        GameState.panicLevel += (targetTension - GameState.panicLevel) * dt * 1.2;
+        if (GameState.panicLevel < 0.001) GameState.panicLevel = 0;
+
+        if (Math.random() < 0.15) {
+            let rx = 45 + Math.random() * 1510;
+            let ry = 110 + Math.random() * 835;
+            ParticlePool.spawn(rx, ry, 0);
+        }
+
+        if (GameState.tasks.coffee && Math.random() < 0.15) {
+            ParticlePool.spawn(1140, 115, 1, 0, -15);
+        }
+
+        if (!GameState.tasks.radio && Math.random() < dt * 6.0) {
+            ParticlePool.spawn(1160, 637, 3, 0, 0, 244, 180, 100);
+        }
+
+        if (GameState.qteActive) {
+            GameState.rhythmTimer += dt * 0.9;
+            if (GameState.rhythmTimer > 1.0) {
+                GameState.rhythmTimer = 0;
+                GameState.qteProgress = Math.max(0, GameState.qteProgress - 1);
+            }
+        }
+
+        // PORTÃO DE SAÍDA DO CASARÃO (Fundos)
+        if (this.player.pos.x > 1515 && this.player.pos.y > 720 && this.player.pos.y < 860) {
+            // Exigir TODOS os objetivos, incluindo puzzles adicionais
+            if (GameState.tasks.cloth && GameState.tasks.keys && GameState.tasks.coffee && 
+                GameState.tasks.radio && GameState.tasks.mirror && GameState.tasks.clockRepaired && 
+                GameState.tasks.safe && GameState.tasks.gardenVisited) {
+                
+                GameState.tasks.street = true;
+                GameState.checkHUD();
+                this.manager.switchTo("RUA");
+            } else {
+                NarrativeSystem.setThought("Raquel: 'Ainda não posso sair. Devo terminar de recolher minhas coisas, vestir meu sobretudo no quarto, acalmar-me diante do espelho, resolver os puzzles ocultos de Ricardo e explorar a estufa.'");
+                this.player.pos.x -= 25; 
+                this.player.vel.x = 0;
+            }
+        }
+    }
+
+    draw(ctx) {
+        ctx.fillStyle = "#020205";
+        ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+
+        ctx.save();
+        ctx.translate(-this.cameraX, -this.cameraY);
+
+        ctx.drawImage(TextureCache.woodFloor, 0, 100);
+        ctx.drawImage(TextureCache.bathroomTiles, 0, 520);
+        ctx.drawImage(TextureCache.corridorPlanks, 540, 100);
+        ctx.drawImage(TextureCache.tilesFloor, 1000, 100);
+        ctx.drawImage(TextureCache.carpetFloor, 1000, 500);
+        ctx.drawImage(TextureCache.conservatorySoil, 1300, 500); // Novo cômodo: Estufa
+
+        ctx.drawImage(TextureCache.wallPaper, 0, 80);
+
+        ctx.fillStyle = "#2d1a10";
+        for (let dw of this.doorways) {
+            ctx.fillRect(dw.x, dw.y, dw.w, dw.h);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+            ctx.fillRect(dw.x, dw.y, dw.w, 4);
+            ctx.fillStyle = "#2d1a10";
+        }
+
+        // Cama do Quarto
+        ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.fillRect(264, 114, 120, 110); 
+        ctx.fillStyle = "#22120b"; ctx.fillRect(260, 110, 120, 110); 
+        ctx.fillStyle = "#ece0d1"; ctx.fillRect(265, 125, 110, 90); 
+        ctx.fillStyle = "#dfc5a5"; ctx.fillRect(265, 115, 50, 20); ctx.fillRect(325, 115, 50, 20); 
+        ctx.fillStyle = "#6b432a"; ctx.fillRect(260, 205, 120, 10); 
+        
+        // Tapete persa decorativo
+        ctx.fillStyle = "rgba(100, 20, 30, 0.4)";
+        ctx.fillRect(200, 250, 180, 110);
+        ctx.strokeStyle = "rgba(220, 180, 100, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(203, 253, 174, 104);
+
+        // Banheira do Banheiro
+        ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(64, 824, 120, 70);
+        ctx.fillStyle = "#cbd5e1"; ctx.fillRect(60, 820, 120, 70); 
+        ctx.fillStyle = "#f8fafc"; ctx.fillRect(65, 825, 110, 60); 
+        ctx.fillStyle = "#38bdf8"; ctx.fillRect(70, 835, 100, 40); 
+        ctx.fillStyle = "#94a3b8"; ctx.fillRect(165, 848, 12, 14); 
+
+        // Cadeiras e mesa da cozinha
+        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.fillRect(1235, 235, 20, 45); 
+        ctx.fillStyle = "#2e160a"; ctx.fillRect(1230, 230, 20, 45); 
+        ctx.fillRect(1390, 230, 20, 45); 
+
+        // Sofá de Veludo Vermelho
+        ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(1154, 804, 150, 65);
+        ctx.fillStyle = "#3f0a10"; ctx.fillRect(1150, 800, 150, 65); 
+        ctx.fillStyle = "#5c0e18"; ctx.fillRect(1158, 808, 134, 52); 
+        ctx.fillStyle = "#3f0a10"; ctx.fillRect(1150, 800, 12, 60); ctx.fillRect(1288, 800, 12, 60); 
+
+        // Estante de Livros
+        ctx.fillStyle = "#1e110d"; ctx.fillRect(1450, 600, 100, 45); 
+        ctx.fillStyle = "#d97706"; ctx.fillRect(1458, 608, 12, 28); ctx.fillStyle = "#10b981"; ctx.fillRect(1475, 608, 10, 28); ctx.fillStyle = "#475569"; ctx.fillRect(1510, 608, 15, 28); 
+
+        // LIMITES E PAREDES DO MAPA
+        ctx.fillStyle = "#07080d";
+        for (let obs of this.obstacles) {
+            if (obs.x === 110 && obs.y === 110) continue;
+
+            ctx.fillStyle = "rgba(1, 1, 4, 0.6)";
+            ctx.fillRect(obs.x + 5, obs.y + 5, obs.w, obs.h);
+            
+            ctx.fillStyle = "#10131d";
+            ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+            
+            ctx.strokeStyle = "#334155";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+        }
+
+        // LAREIRA DO QUARTO
+        ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(60, 780, 120, 15);
+        ctx.fillStyle = "#1e1b18"; ctx.fillRect(60, 740, 120, 40);
+        ctx.fillStyle = "#eab308";
+        let fireFlicker = 0.8 + Math.sin(performance.now() * 0.012) * 0.2;
+        ctx.save(); ctx.globalAlpha = 0.35 * fireFlicker;
+        let fireGrad = ctx.createRadialGradient(120, 770, 5, 120, 770, 70);
+        fireGrad.addColorStop(0, "rgba(249,115,22,1)");
+        fireGrad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = fireGrad; ctx.beginPath(); ctx.arc(120, 770, 70, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+
+        // PORTÃO DE SAÍDA VISUAL DOS FUNDOS
+        ctx.fillStyle = "#06090e"; ctx.fillRect(1540, 710, 30, 160);
+        ctx.fillStyle = "rgba(0, 240, 255, 0.12)"; ctx.fillRect(1542, 712, 10, 156);
+        ctx.fillStyle = "#f59e0b"; ctx.fillRect(1545, 785, 4, 7); 
+
+        for(let i=0; i<this.props.length; i++) {
+            let pr = this.props[i];
+            
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fillRect(pr.x + 4, pr.y + 4, pr.w, pr.h);
+            
+            ctx.fillStyle = pr.color; 
+            ctx.fillRect(pr.x, pr.y, pr.w, pr.h);
+            
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(pr.x, pr.y, pr.w, pr.h);
+
+            if (pr.name === "wardrobe") {
+                ctx.fillStyle = "#050201"; ctx.fillRect(pr.x + pr.w/2 - 2, pr.y, 4, pr.h);
+                ctx.fillStyle = "#f59e0b"; 
+                ctx.fillRect(pr.x + pr.w/2 - 8, pr.y + pr.h/2 - 4, 3, 8);
+                ctx.fillRect(pr.x + pr.w/2 + 5, pr.y + pr.h/2 - 4, 3, 8);
+
+                if (!GameState.tasks.cloth) {
+                    let pulse = 0.5 + Math.sin(performance.now() * 0.007) * 0.5;
+                    ctx.strokeStyle = `rgba(168, 85, 247, ${pulse})`; 
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(pr.x - 4, pr.y - 4, pr.w + 8, pr.h + 8);
+
+                    ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + pulse * 0.6})`;
+                    ctx.font = "18px 'Special Elite'";
+                    ctx.textAlign = "center";
+                    ctx.fillText("SOBRETUDO", pr.x + pr.w/2, pr.y - 10);
+                }
+            }
+            if (pr.name === "stove") {
+                ctx.fillStyle = "#020617"; ctx.fillRect(pr.x + 12, pr.y + 8, 28, 14); ctx.fillRect(pr.x + pr.w - 40, pr.y + 8, 28, 14);
+            }
+            if (pr.name === "mirror") {
+                ctx.fillStyle = "rgba(14, 116, 144, 0.4)"; ctx.fillRect(pr.x + 2, pr.y + 2, pr.w - 4, pr.h - 4);
+                if(GameState.qteActive) {
+                    let scaleAmt = GameState.rhythmTimer;
+                    ctx.save();
+                    ctx.strokeStyle = "rgba(168, 85, 247, 0.6)"; 
+                    ctx.beginPath();
+                    ctx.arc(pr.x + pr.w/2, pr.y + pr.h/2, 5 + scaleAmt * 18, 0, Math.PI*2);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+            if (pr.name === "recordPlayer") {
+                ctx.fillStyle = "#0f172a"; ctx.beginPath(); ctx.arc(pr.x + pr.w/2, pr.y + pr.h/2, 14, 0, Math.PI*2); ctx.fill();
+            }
+
+            // NOVAS DECORAÇÕES DE RENDERING PARA OS PROPS ADICIONADOS
+            if (pr.name === "grandfatherClock") {
+                // Desenhar face branca de relógio analógico
+                ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(pr.x + pr.w/2, pr.y + 25, 14, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillRect(pr.x + pr.w/2 - 1, pr.y + 25, 2, -8); // Ponteiro fixo
+                if (GameState.tasks.clockRepaired) {
+                    // Ponteiro secundário consertado indicando 18h30 (6h30)
+                    ctx.fillRect(pr.x + pr.w/2 - 1, pr.y + 25, 2, 7); 
+                }
+                // Desenhar pêndulo dourado oscilante
+                let clockPulse = Math.sin(performance.now() * 0.005) * 8;
+                ctx.fillStyle = "#d97706";
+                ctx.fillRect(pr.x + pr.w/2 - 2 + clockPulse, pr.y + 45, 4, 22);
+                ctx.beginPath(); ctx.arc(pr.x + pr.w/2 + clockPulse, pr.y + 67, 7, 0, Math.PI*2); ctx.fill();
+            }
+            if (pr.name === "hiddenSafe") {
+                ctx.fillStyle = "#334155"; ctx.fillRect(pr.x + 4, pr.y + 4, pr.w - 8, pr.h - 8);
+                // Detalhe de fechadura mecânica rotativa
+                ctx.fillStyle = "#0f172a"; ctx.beginPath(); ctx.arc(pr.x + pr.w/2, pr.y + pr.h/2, 12, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#d1d5db"; ctx.fillRect(pr.x + pr.w/2 - 8, pr.y + pr.h/2 - 2, 16, 4);
+            }
+            if (pr.name === "winterGardenPlants") {
+                // Desenhar flores e rosas vermelhas pixeladas
+                ctx.fillStyle = "#047857"; ctx.fillRect(pr.x+10, pr.y+10, 8, 20); ctx.fillRect(pr.x+40, pr.y+25, 12, 35);
+                ctx.fillStyle = "#dc2626"; ctx.beginPath(); ctx.arc(pr.x+14, pr.y+8, 5, 0, Math.PI*2); ctx.arc(pr.x+46, pr.y+20, 6, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        for(let i=0; i<GhostPool.maxSize; i++) { 
+            let gp = GhostPool.pool[i];
+            if(gp.active) {
+                let oldHeading = this.player.heading;
+                this.player.heading = gp.heading;
+                this.player.draw(ctx, 0, 0, false, gp.alpha); 
+                this.player.heading = oldHeading;
+            }
+        }
+        this.player.draw(ctx);
+
+        drawThoughtBubble(ctx, NarrativeSystem.displayedText, this.player.pos.x, this.player.pos.y, NarrativeSystem.isPanicText);
+
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        let rGrad = ctx.createLinearGradient(400, 100, 260, 420);
+        rGrad.addColorStop(0, `rgba(255, 240, 210, ${0.15 + this.thunderAlpha * 0.7})`);
+        rGrad.addColorStop(1, "rgba(255, 240, 210, 0)");
+        ctx.fillStyle = rGrad;
+        ctx.beginPath();
+        ctx.moveTo(320, 100); ctx.lineTo(460, 100); ctx.lineTo(330, 460); ctx.lineTo(190, 460);
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+
+        ParticlePool.draw(ctx, 0, 0);
+
+        ctx.save(); 
+        ctx.globalCompositeOperation = "multiply";
+        
+        let customGammaVal = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gamma-multiplier')) || 1.0;
+        let baseDarkness = 0.98 - (this.thunderAlpha * 0.85);
+        let mapDarkness = Math.max(0, Math.min(0.99, baseDarkness * (1 / customGammaVal)));
+        
+        let shadowCanvas = document.createElement('canvas');
+        shadowCanvas.width = 1600; shadowCanvas.height = 1000;
+        let sCtx = shadowCanvas.getContext('2d');
+        sCtx.fillStyle = `rgba(8, 12, 22, ${mapDarkness})`;
+        sCtx.fillRect(0, 0, 1600, 1000);
+
+        let pGrad = sCtx.createRadialGradient(this.player.pos.x, this.player.pos.y, 45, this.player.pos.x, this.player.pos.y, 220);
+        pGrad.addColorStop(0, "rgba(255,255,255,1.0)");
+        pGrad.addColorStop(1, "rgba(255,255,255,0)");
+        sCtx.globalCompositeOperation = "destination-out";
+        sCtx.fillStyle = pGrad; sCtx.beginPath(); sCtx.arc(this.player.pos.x, this.player.pos.y, 220, 0, Math.PI*2); sCtx.fill();
+
+        let fFlick = 0.95 + Math.sin(performance.now()*0.02)*0.05;
+        let fireplaceLightGrad = sCtx.createRadialGradient(120, 770, 10, 120, 770, 180 * fFlick);
+        fireplaceLightGrad.addColorStop(0, "rgba(255,255,255,1.0)");
+        fireplaceLightGrad.addColorStop(1, "rgba(255,255,255,0)");
+        sCtx.fillStyle = fireplaceLightGrad; sCtx.beginPath(); sCtx.arc(120, 770, 180 * fFlick, 0, Math.PI*2); sCtx.fill();
+
+        ctx.drawImage(shadowCanvas, 0, 0);
+        ctx.restore();
+
+        if(this.player.holdTimer > 0 && this.player.holdTimer < this.player.maxHold) {
+            let pct = this.player.holdTimer / this.player.maxHold;
+            ctx.fillStyle = "rgba(1, 1, 3, 0.95)"; ctx.fillRect(this.player.pos.x - 30, this.player.pos.y - 25, 60, 6);
+            ctx.fillStyle = "#a855f7"; ctx.fillRect(this.player.pos.x - 28, this.player.pos.y - 24, 56 * pct, 4); 
+        }
+
+        // Aviso contextual de interação
+        drawInteractPrompt(ctx, this.player);
+
+        // Bússola para a saída quando todos os objetivos terminam
+        if (GameState.tasks.cloth && GameState.tasks.keys && GameState.tasks.coffee &&
+            GameState.tasks.radio && GameState.tasks.mirror && GameState.tasks.clockRepaired &&
+            GameState.tasks.safe && GameState.tasks.gardenVisited && !GameState.tasks.street) {
+            drawExitCompass(ctx, this.player, 1555, 790);
+        }
+
+        if(GameState.qteActive) {
+            let dx = this.player.pos.x;
+            let dy = this.player.pos.y - 50;
+            
+            ctx.strokeStyle = "rgba(168, 85, 247, 0.4)"; 
+            ctx.lineWidth = 4.0;
+            ctx.beginPath(); ctx.arc(dx, dy, GameState.rhythmTargetRadius, 0, Math.PI*2); ctx.stroke();
+            
+            let pulseRadius = GameState.rhythmTimer * 75;
+            ctx.strokeStyle = "rgba(216, 180, 254, 0.8)";
+            ctx.lineWidth = 2.0;
+            ctx.beginPath(); ctx.arc(dx, dy, pulseRadius, 0, Math.PI*2); ctx.stroke();
+            
+            for(let d = 0; d < GameState.qteTarget; d++) {
+                ctx.fillStyle = d < GameState.qteProgress ? "#a855f7" : "#3b0764";
+                ctx.beginPath();
+                ctx.arc(dx - 30 + d * 15, dy + 16, 3.5, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        ctx.restore();
+    }
+}
+
+class SceneRua {
+    constructor(manager) {
+        this.manager = manager; 
+        this.player = new Player(80, 520);
+        this.boundaries = { minX: 15, maxX: 1585, minY: 160, maxY: 540, isRua: true };
+        this.cameraX = 0; this.cameraY = 0; this.worldWidth = 1600; this.weather = new WeatherSystem(this.worldWidth);
+        
+        this.cars = [
+            new Car(140, 255, 120, 44, 7.2, "#be123c"), 
+            new Car(650, 310, 125, 44, 5.5, "#09090b"), 
+            new Car(1120, 255, 122, 44, 8.2, "#0284c7"), 
+            new Car(390, 410, 115, 42, -9.8, "#c026d3"),  
+            new Car(950, 450, 128, 44, -7.2, "#047857")  
+        ];
+        
+        this.bgNodes = []; let nx = -60;
+        while(nx < this.worldWidth + 200) { 
+            this.bgNodes.push({
+                x: nx, 
+                w: 160+Math.random()*90, 
+                h: 290+Math.random()*170,
+                neonType: Math.floor(Math.random() * 4),
+                neonFlicker: Math.random()
+            }); 
+            nx += 180; 
+        }
+        this.postes = [160, 520, 880, 1240, 1550]; 
+        this.screenShake = 0; this.flash = 0;
+
+        this.ricardoCar = { x: 1390, y: 150, w: 130, h: 50, color: "#05060a", headlightOn: false, headlightAlpha: 0, speed: 0 };
+        this.cutsceneTimer = 0; this.cutsceneStage = 0; 
+    }
+    
+    onEnter() { 
+        this.player.pos.set(80, 520); 
+        this.player.vel.set(0,0); 
+        this.player.stamina = 100;
+        this.player.visible = true;
+
+        GameState.cutsceneActive = false;
+        this.cutsceneStage = 0;
+        this.cutsceneTimer = 0;
+        this.flash = 0;
+        this.screenShake = 0;
+        this.ricardoCar = { x: 1390, y: 150, w: 130, h: 50, color: "#05060a", headlightOn: false, headlightAlpha: 0, speed: 0 };
+
+        NarrativeSystem.setThought("Raquel: 'A tempestade de outono fustiga meu rosto... Ricardo me aguarda estacionado logo adiante.'"); 
+    }
+    
+    update(dt) {
+        if (GameState.isPaused) return;
+        
+        if(this.screenShake > 0) this.screenShake -= dt; 
+        if(this.flash > 0) this.flash -= dt * 2.0;
+        this.weather.update(dt, this.boundaries);
+
+        if(Math.random() < 0.12) {
+            ParticlePool.spawn(this.cameraX + V_WIDTH + 40, Math.random()*280, 5);
+        }
+
+        if (Math.random() < dt * 12.0) {
+            let randomPoste = this.postes[Math.floor(Math.random() * this.postes.length)];
+            ParticlePool.spawn(randomPoste + (Math.random() - 0.5) * 20, 85 + (Math.random() - 0.5) * 10, 0);
+        }
+
+        if (!GameState.cutsceneActive) {
+            this.player.update(dt, [], this.boundaries, null);
+            
+            for(let i=0; i<this.cars.length; i++) {
+                let car = this.cars[i];
+                car.update(dt, this.player);
+                
+                let dx = Math.abs(this.player.pos.x - (car.x + car.w/2));
+                let dy = Math.abs(this.player.pos.y - (car.y + car.h/2));
+                
+                if (dx < 170 && dy < 50) {
+                    GameState.panicLevel = Math.max(GameState.panicLevel, (1.0 - dx/170));
+                }
+
+                if(this.player.pos.x + 6 > car.x && this.player.pos.x - 6 < car.x + car.w &&
+                   this.player.pos.y + 5 > car.y && this.player.pos.y - 5 < car.y + car.h) {
+                    
+                    this.screenShake = 0.8; 
+                    this.flash = 1.0;
+                    GameState.glitchIntensity = 0.95;
+                    GameState.glitchTimer = 0.65;
+                    
+                    for(let k=0; k<50; k++) {
+                        ParticlePool.spawn(this.player.pos.x, this.player.pos.y, 0, (Math.random()-0.5)*250, (Math.random()-0.5)*250);
+                    }
+                    
+                    this.player.pos.set(80, 520); 
+                    this.player.vel.set(0,0); 
+                    this.player.stamina = 100;
+                    NarrativeSystem.setThought("Raquel: 'Minha mente pune-me com o reflexo do desastre iminente!'", true);
+                }
+            }
+
+            GameState.panicLevel = Math.max(0, GameState.panicLevel - dt * 0.3);
+            GameState.triggerPanicHUD(GameState.panicLevel > 0.5);
+
+            SoundSynth.playHeartbeat(60 + Math.floor(GameState.panicLevel * 60));
+
+            let carCenterX = this.ricardoCar.x + this.ricardoCar.w / 2;
+            let distToSedan = Math.hypot(this.player.pos.x - carCenterX, this.player.pos.y - (this.ricardoCar.y + this.ricardoCar.h / 2));
+            
+            if (distToSedan < 85) {
+                GameState.cutsceneActive = true;
+                this.player.visible = false;
+                this.cutsceneStage = 1;
+                this.cutsceneTimer = 0;
+                NarrativeSystem.setThought("Ricardo: 'Raquel... Sabia que viria. O crepúsculo de Santa Maria nos espera. Suba...'", false);
+            }
+        } else {
+            this.cutsceneTimer += dt;
+            
+            if (this.cutsceneStage === 1) {
+                let pulse = Math.floor(this.cutsceneTimer * 8) % 2;
+                this.ricardoCar.headlightAlpha = pulse * 0.9;
+                
+                if (Math.random() < 0.25) {
+                    ParticlePool.spawn(this.ricardoCar.x + this.ricardoCar.w, this.ricardoCar.y + this.ricardoCar.h - 5, 1, 30, -5);
+                }
+
+                if (this.cutsceneTimer > 2.0) {
+                    this.cutsceneStage = 2;
+                    this.ricardoCar.headlightOn = true;
+                    this.cutsceneTimer = 0;
+                }
+            } else if (this.cutsceneStage === 2) {
+                this.ricardoCar.headlightAlpha = 1.0;
+                
+                if (Math.random() < 0.45) {
+                    ParticlePool.spawn(this.ricardoCar.x + this.ricardoCar.w, this.ricardoCar.y + this.ricardoCar.h - 5, 1, 60, -8);
+                }
+
+                if (this.cutsceneTimer > 1.2) {
+                    this.cutsceneStage = 3;
+                    this.cutsceneTimer = 0;
+                }
+            } else if (this.cutsceneStage === 3) {
+                this.ricardoCar.speed += 500 * dt;
+                this.ricardoCar.x -= this.ricardoCar.speed * dt;
+                
+                if (Math.random() < 0.85) {
+                    ParticlePool.spawn(this.ricardoCar.x + this.ricardoCar.w, this.ricardoCar.y + this.ricardoCar.h - 5, 1, 90, -3);
+                }
+
+                if (this.cutsceneTimer > 1.5) {
+                    this.flash += dt * 1.5; 
+                }
+                
+                // === DISPARADOR DA TRANSIÇÃO DA PARTE 1 PARA A PARTE 2 ===
+                if (this.cutsceneTimer > 3.0) {
+                    transicaoParaParte2();
+                }
+            }
+        }
+
+        let targetCamX = this.player.pos.x - V_WIDTH / 2;
+        this.cameraX += (targetCamX - this.cameraX) * 0.08;
+        this.cameraX = Math.max(0, Math.min(this.worldWidth - V_WIDTH, this.cameraX));
+    }
+    
+    draw(ctx) {
+        ctx.save(); 
+        
+        let shakeX = 0, shakeY = 0;
+        if(this.screenShake > 0) {
+            shakeX = (Math.random()-0.5)*18;
+            shakeY = (Math.random()-0.5)*18;
+        } else if (GameState.panicLevel > 0.7) {
+            shakeX = (Math.random()-0.5)*3.8;
+            shakeY = (Math.random()-0.5)*3.8;
+        }
+        ctx.translate(shakeX, shakeY);
+        
+        ctx.fillStyle = "#010102"; ctx.fillRect(0,0,V_WIDTH, V_HEIGHT);
+        
+        ctx.save(); ctx.translate(-this.cameraX * 0.28, 0); ctx.fillStyle = "#030408";
+        for(let i=0; i<this.bgNodes.length; i++) {
+            let n = this.bgNodes[i];
+            ctx.fillRect(n.x, 220 - n.h, n.w, n.h); 
+            
+            let flick = Math.sin(performance.now() * 0.008 + n.neonFlicker * 50) > -0.2 ? 1.0 : 0.15;
+            ctx.save();
+            ctx.globalAlpha = flick;
+            if(n.neonType === 0) {
+                ctx.fillStyle = "#f43f5e"; ctx.fillRect(n.x + n.w/2 - 12, 220 - n.h + 20, 24, 8);
+                ctx.shadowColor = "#f43f5e"; ctx.shadowBlur = 15;
+                ctx.strokeStyle = "#fff"; ctx.strokeRect(n.x + n.w/2 - 12, 220 - n.h + 20, 24, 8);
+            } else if(n.neonType === 1) {
+                ctx.fillStyle = "#a855f7"; ctx.fillRect(n.x + 30, 220 - n.h + 40, 6, 40);
+                ctx.shadowColor = "#a855f7"; ctx.shadowBlur = 15;
+                ctx.strokeStyle = "#fff"; ctx.strokeRect(n.x + 30, 220 - n.h + 40, 6, 40);
+            } else if(n.neonType === 2) {
+                ctx.fillStyle = "#06b6d4"; ctx.beginPath(); ctx.arc(n.x + n.w - 40, 220 - n.h + 30, 10, 0, Math.PI*2); ctx.fill();
+                ctx.shadowColor = "#06b6d4"; ctx.shadowBlur = 15;
+                ctx.strokeStyle = "#fff"; ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.fillStyle = "rgba(251, 191, 36, 0.08)";
+            for(let j=0; j<n.h - 60; j+=40) {
+                if(Math.sin(n.x + j) > 0.3) {
+                    ctx.fillRect(n.x + 22, 220 - n.h + j, 8, 14);
+                    ctx.fillRect(n.x + n.w - 30, 220 - n.h + j, 8, 14);
+                }
+            }
+            ctx.fillStyle = "#030408";
+        }
+        ctx.restore();
+
+        ctx.save(); ctx.translate(-this.cameraX, 0);
+        
+        ctx.fillStyle = "#07080c"; 
+        ctx.fillRect(0, 145, this.worldWidth, 65); 
+        ctx.fillRect(0, 490, this.worldWidth, 110); 
+        
+        ctx.fillStyle = "#11131c";
+        ctx.fillRect(0, 206, this.worldWidth, 4);
+        ctx.fillRect(0, 490, this.worldWidth, 4);
+
+        ctx.drawImage(TextureCache.asphalt, 0, 210);
+
+        ctx.save(); ctx.globalAlpha = 0.45;
+        ctx.drawImage(TextureCache.puddleNoise, 250, 240); 
+        ctx.drawImage(TextureCache.puddleNoise, 750, 390);
+        ctx.drawImage(TextureCache.puddleNoise, 1150, 270); 
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalCompositeOperation = "source-over";
+        let puddles = [
+            {x: 250, y: 240, w: 450, h: 150},
+            {x: 750, y: 390, w: 450, h: 150},
+            {x: 1150, y: 270, w: 450, h: 150}
+        ];
+
+        for (let j = 0; j < puddles.length; j++) {
+            let pd = puddles[j];
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(pd.x + pd.w/2, pd.y + pd.h/2, pd.w * 0.44, pd.h * 0.44, 0, 0, Math.PI*2);
+            ctx.clip();
+
+            if (this.player.pos.x > pd.x && this.player.pos.x < pd.x + pd.w) {
+                this.player.draw(ctx, 0, 0, true);
+            }
+
+            for (let i = 0; i < this.cars.length; i++) {
+                let car = this.cars[i];
+                if (car.x + car.w > pd.x && car.x < pd.x + pd.w) {
+                    ctx.save();
+                    ctx.translate(car.x, car.y + car.h + 18 + car.tiltY);
+                    ctx.scale(1, -0.45);
+                    ctx.globalAlpha = 0.18 + Math.sin(performance.now() * 0.007) * 0.04;
+                    ctx.fillStyle = car.color;
+                    ctx.fillRect(0, 0, car.w, car.h);
+                    ctx.restore();
+                }
+            }
+            ctx.restore();
+        }
+        ctx.restore();
+
+        ctx.fillStyle = "#a16207";
+        for(let i=0; i<this.worldWidth; i+=100) { 
+            ctx.fillRect(i, 350, 45, 4); 
+            ctx.fillRect(i, 358, 45, 4); 
+        }
+
+        for(let i=0; i<this.cars.length; i++) this.cars[i].draw(ctx, 0, 0);
+        
+        ctx.save();
+        let rcx = this.ricardoCar.x;
+        let rcy = this.ricardoCar.y;
+        
+        if (this.ricardoCar.headlightAlpha > 0) {
+            ctx.save(); ctx.globalCompositeOperation = "screen";
+            ctx.translate(rcx, rcy + this.ricardoCar.h/2);
+            ctx.scale(-1, 1);
+            ctx.globalAlpha = this.ricardoCar.headlightAlpha;
+            ctx.drawImage(TextureCache.ricardoLight, -12, -TextureCache.ricardoLight.height/2);
+            ctx.restore();
+        }
+
+        let rGrad = ctx.createLinearGradient(rcx, rcy, rcx, rcy + this.ricardoCar.h);
+        rGrad.addColorStop(0, this.ricardoCar.color); 
+        rGrad.addColorStop(1, "#020305");
+        ctx.fillStyle = rGrad; ctx.fillRect(rcx, rcy, this.ricardoCar.w, this.ricardoCar.h);
+        
+        ctx.fillStyle = "rgba(186, 230, 253, 0.14)";
+        ctx.fillRect(rcx + 20, rcy + 5, this.ricardoCar.w - 40, this.ricardoCar.h - 10);
+        
+        if (this.cutsceneStage < 3) {
+            ctx.fillStyle = "#010204"; ctx.fillRect(rcx + 38, rcy + 13, 11, 11); 
+        }
+        ctx.restore();
+
+        this.player.draw(ctx, 0, 0);
+
+        drawThoughtBubble(ctx, NarrativeSystem.displayedText, this.player.pos.x, this.player.pos.y, NarrativeSystem.isPanicText);
+
+        ctx.save(); ctx.globalCompositeOperation = "screen";
+        for(let i=0; i<this.postes.length; i++) {
+            let px = this.postes[i];
+            ctx.drawImage(TextureCache.lightCone, px - 200, 70);
+        }
+        ctx.restore();
+        
+        ctx.fillStyle = "#1e293b"; 
+        for(let i=0; i<this.postes.length; i++) { 
+            let px = this.postes[i];
+            ctx.fillRect(px - 3, 70, 6, 140); 
+            ctx.fillRect(px - 16, 70, 18, 5); 
+        }
+
+        ParticlePool.draw(ctx, 0, 0); 
+        this.weather.draw(ctx, 0, 0);
+        
+        ctx.restore(); ctx.restore();
+
+        if(this.flash > 0) {
+            if (GameState.cutsceneActive) {
+                ctx.fillStyle = `rgba(1, 1, 3, ${Math.min(1, this.flash)})`;
+            } else {
+                ctx.fillStyle = `rgba(244, 63, 94, ${this.flash * 0.72})`; 
+            }
+            ctx.fillRect(0,0,V_WIDTH, V_HEIGHT);
+        }
+        
+        if (!GameState.cutsceneActive) {
+            ctx.fillStyle = "rgba(2, 1, 6, 0.95)"; ctx.fillRect(25, V_HEIGHT - 35, 180, 14);
+            ctx.strokeStyle = "#5b21b6"; ctx.lineWidth = 2.0; ctx.strokeRect(25, V_HEIGHT - 35, 180, 14); 
+            ctx.fillStyle = this.player.stamina < 20 ? "#f43f5e" : "#a855f7"; 
+            ctx.fillRect(27, V_HEIGHT - 33, 176 * (this.player.stamina / this.player.maxStamina), 10);
+        }
+    }
+}
+
+// EXECUÇÃO DO LOOP DA PARTE 1
+const GameEngine = {
+    canvas: null, ctx: null, sceneManager: null,
+    lastTime: 0, accumulator: 0, heartbeat: 0, isLoading: true,
+    animationFrameId: null,
+
+    async init() {
+        this.canvas = document.getElementById('engineCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        
+        Input.init(); 
+        ParticlePool.init(); 
+        GhostPool.init();
+
+        this.renderLoadingScreen();
+        
+        await TextureCache.init();
+
+        this.sceneManager = new SceneManager();
+        this.sceneManager.add("QUARTO", new SceneQuarto(this.sceneManager));
+        this.sceneManager.add("RUA", new SceneRua(this.sceneManager));
+        this.sceneManager.switchTo("QUARTO");
+
+        this.isLoading = false;
+        this.setupResize();
+        this.lastTime = performance.now();
+        
+        if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+        this.loop(this.lastTime);
+    },
+
+    renderLoadingScreen() {
+        this.ctx.fillStyle = "#010103"; this.ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+        this.ctx.font = "28px 'Special Elite'"; this.ctx.fillStyle = "#a855f7";
+        this.ctx.textAlign = "center"; 
+        this.ctx.fillText("CONFIGURANDO MEMÓRIAS COGNITIVAS...", V_WIDTH/2, V_HEIGHT/2);
+    },
+
+    setupResize() {
+        const resize = () => {
+            let scaler = document.getElementById('game-scaler');
+            let windowW = window.innerWidth;
+            let windowH = window.innerHeight;
+            
+            let scaleX = windowW / V_WIDTH;
+            let scaleY = windowH / V_HEIGHT;
+            let finalScale = Math.min(scaleX, scaleY);
+            
+            scaler.style.transform = `scale(${finalScale})`;
+            
+            this.canvas.width = V_WIDTH; 
+            this.canvas.height = V_HEIGHT;
+        };
+        window.addEventListener('resize', resize, { passive: true }); 
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resize, 200);
+        });
+        resize();
+    },
+
+    loop(now) {
+        if (this.isLoading || CURRENT_GAME_PART !== 1) return;
+        let dt = (now - this.lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1;
+        this.lastTime = now;
+
+        if (!GameState.isPaused) {
+            this.accumulator += dt;
+            while (this.accumulator >= TIME_STEP) {
+                this.sceneManager.update(TIME_STEP);
+                NarrativeSystem.update(TIME_STEP);
+                ParticlePool.update(TIME_STEP);
+                GhostPool.update(TIME_STEP);
+                this.accumulator -= TIME_STEP;
+            }
+        }
+
+        if (GameState.panicLevel > 0.4 && !GameState.cutsceneActive) {
+            this.drawRGBSplit(dt);
+        } else {
+            this.sceneManager.draw(this.ctx);
+        }
+
+        if(GameState.glitchTimer > 0 && !GameState.isPaused) {
+            GameState.glitchTimer -= dt;
+            this.applyGlitchEffect();
+        }
+
+        this.applyVignetteAndAberration(dt);
+        this.updateTensionHUD();
+
+        this.animationFrameId = requestAnimationFrame((t) => this.loop(t));
+    },
+
+    updateTensionHUD() {
+        let fill = document.getElementById('tension-fill');
+        if (!fill) return;
+        // Base de pulsação calma (~22%) que sobe com o pânico/colapso
+        let base = 0.22;
+        let level = Math.min(1, base + GameState.panicLevel * 0.85 + (GameState.qteActive ? 0.18 : 0));
+        fill.style.width = (level * 100).toFixed(1) + "%";
+        if (level > 0.62) {
+            fill.style.background = "linear-gradient(90deg, #7f1d1d, #f43f5e, #fda4af)";
+        } else {
+            fill.style.background = "linear-gradient(90deg, #6b21a8, #a855f7, #d8b4fe)";
+        }
+    },
+
+    drawRGBSplit(dt) {
+        this.heartbeat += dt * (GameState.panicLevel * 16.0);
+        let shift = Math.sin(this.heartbeat) * GameState.panicLevel * 8.0;
+        
+        let tempCanvas = document.createElement('canvas');
+        tempCanvas.width = V_WIDTH; tempCanvas.height = V_HEIGHT;
+        let tempCtx = tempCanvas.getContext('2d');
+        
+        this.sceneManager.draw(tempCtx);
+
+        this.ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
+
+        this.ctx.save();
+        this.ctx.translate(-shift, 0);
+        this.ctx.drawImage(tempCanvas, 0, 0);
+        this.ctx.globalCompositeOperation = "multiply";
+        this.ctx.fillStyle = "rgba(168, 85, 247, 1.0)"; 
+        this.ctx.fillRect(shift, 0, V_WIDTH, V_HEIGHT);
+        this.ctx.restore();
+
+        this.ctx.save();
+        this.ctx.globalCompositeOperation = "screen";
+        this.ctx.translate(shift, 0);
+        this.ctx.drawImage(tempCanvas, 0, 0);
+        this.ctx.globalCompositeOperation = "multiply";
+        this.ctx.fillStyle = "#00ffff"; this.ctx.fillRect(-shift, 0, V_WIDTH, V_HEIGHT);
+        this.ctx.restore();
+    },
+
+    applyGlitchEffect() {
+        let sliceCount = 18;
+        for (let i = 0; i < sliceCount; i++) {
+            let sy = Math.random() * V_HEIGHT;
+            let sh = 4 + Math.random() * 32;
+            let disp = (Math.random() - 0.5) * 56 * GameState.glitchIntensity;
+            this.ctx.drawImage(this.canvas, 0, sy, V_WIDTH, sh, disp, sy, V_WIDTH, sh);
+        }
+    },
+
+    applyVignetteAndAberration(dt) {
+        let alphaBorder = GameState.cutsceneActive ? 0.98 : 0.45 + (GameState.panicLevel * 0.45);
+        let pulseRadius = 1.0 + Math.sin(this.heartbeat) * (GameState.panicLevel * 0.08);
+        
+        let vig = this.ctx.createRadialGradient(
+            V_WIDTH/2, V_HEIGHT/2, V_WIDTH * 0.38 * pulseRadius, 
+            V_WIDTH/2, V_HEIGHT/2, V_WIDTH * 0.8
+        );
+        vig.addColorStop(0, "rgba(0,0,0,0)"); 
+        if (GameState.panicLevel > 0.45) {
+            vig.addColorStop(1, `rgba(45, 3, 5, ${alphaBorder})`);
+        } else {
+            vig.addColorStop(1, `rgba(1, 1, 3, ${alphaBorder})`);
+        }
+        
+        this.ctx.fillStyle = vig; this.ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.005)";
+        for (let y = 0; y < V_HEIGHT; y += 4) {
+            this.ctx.fillRect(0, y, V_WIDTH, 1.8);
+        }
+    }
+};
+
+// ==========================================
+// TRANSIÇÃO CINEMATOGRÁFICA INTER-ATOS
+// ==========================================
+function transicaoParaParte2() {
+    CURRENT_GAME_PART = 2;
+    
+    // Cancela o render da Parte 1
+    if (GameEngine.animationFrameId) {
+        cancelAnimationFrame(GameEngine.animationFrameId);
+    }
+    
+    // Fade Out da Parte 1
+    const p1Wrapper = document.getElementById('part1-wrapper');
+    p1Wrapper.style.opacity = '0';
+    
+    // Muta e encerra os osciladores e ruídos procedurais da Parte 1
+    SoundSynth.stopAll();
+
+    setTimeout(() => {
+        p1Wrapper.style.display = 'none';
+        
+        // Ativa a área da Parte 2
+        const p2Wrapper = document.getElementById('part2-wrapper');
+        p2Wrapper.style.display = 'block';
+        setTimeout(() => { p2Wrapper.style.opacity = '1'; }, 100);
+        
+        // Dispara Prólogo Explorativo
+        initPrologoExplorativo();
+    }, 1500);
+}
+
+
+// ============================================================================
+// ==================== ENGINE DA PARTE 2: EXPLORAÇÃO E NOVEL =================
+// ============================================================================
+
+let curId = "p1";
+let typing = false;
+
+// Árvore da História (Inicia direto na caminhada pós-prólogo)
+const story = {
+    "p1": { name: "Narrador", text: "Raquel e Ricardo caminham lado a lado pelo interior do cemitério de Santa Maria. O silêncio dele é mais pesado que o mármore ao redor.", img: "https://i.imgur.com/7yra366.png", next: [{ t: "Avançar", n: "p2" }] },
+    "p2": { name: "Raquel", text: "Ricardo, por que estamos caminhando tanto? O sol já está quase sumindo no horizonte... você está me assustando de verdade.", img: "https://i.imgur.com/97O9WbL.png", next: [{ t: "Ouvir resposta", n: "p3" }] },
+    "p3": { name: "Ricardo", text: "O pôr do sol se vê melhor logo ali na frente. No jazigo abandonado da família Meireles... onde o tempo simplesmente parou para nós.", img: "https://i.imgur.com/QsGO8et.png", next: [{ t: "Segui-lo até a tumba", n: "p4" }] },
+    "p4": { name: "Narrador", text: "Vocês param diante de uma enorme porta de ferro fundido. O ar cheira a poeira antiga e esquecimento eterno.", img: "https://i.imgur.com/mQWgs2W.png", next: [{ t: "Entrar na Tumba", n: "intermedio_entrar" }, { t: "Fugir correndo!", n: "intermedio_fuga" }] },
+    
+    "intermedio_entrar": { name: "Raquel", text: "Está tão escuro e gelado aqui dentro... Ricardo? Espere, que barulho foi esse na entrada?! A PORTA TRANCOU SOZINHA POR FORA!", img: "https://i.imgur.com/mGmcspt.png", minigame: "labirinto" },
+    "pos_labirinto": { name: "Narrador", text: "Milagrosamente, você encontra frestas em uma antiga saída de ventilação nos fundos da catacumba! Você se arrasta para fora e corre desesperadamente até o portão principal do cemitério... mas ele está fechado!", img: "https://i.imgur.com/8yzNODa.jpeg", next: [{ t: "Olhar em volta", n: "intermedio_fuga_direta" }] },
+    "intermedio_fuga": { name: "Raquel", text: "Não! Eu não vou entrar aí de jeito nenhum! Preciso correr de volta até o portão principal antes que ele tente me fechar aqui dentro!", img: "https://i.imgur.com/8yzNODa.jpeg", next: [{ t: "Chegar ao portão", n: "intermedio_fuga_direta" }] },
+    "intermedio_fuga_direta": { name: "Narrador", text: "O imenso portão de ferro está trancado por correntes e um pesado cadeado enferrujado. Ricardo ressurge das sombras a poucos metros com um olhar doentio. É agora ou nunca!", img: "https://i.imgur.com/Nlvf50h.png", minigame: "portao" },
+
+    "morte": { title: "ETERNA ESCURIDÃO", desc: "Você falhou em escapar. A escuridão te consome. Ricardo agora a possui para sempre no vazio frio do jazigo esquecido.", img: "https://i.imgur.com/E1Eihrf.png", end: true, type: "death" },
+    "sobrevive": { title: "MISERICÓRDIA E LIBERDADE", desc: "Com os dedos feridos e trêmulos, você estoura o bloqueio do cadeado! O portão se abre e você se joga para a estrada escura enquanto a noite engole o cemitério. Você sobreviveu... mas os sussurros de Ricardo te perseguirão para sempre.", img: "https://i.imgur.com/wJdaDVR.png", end: true, type: "win" }
+};
+
+// PRÓLOGO ESTILO POKÉMON / UNDERTALE
+let prologoRunning = false;
+let rachel = { x: 50, y: 300, size: 10, speed: 4 };
+let ricardoNpc = { x: 190, y: 60, size: 12 };
+let propObjects = [
+    { x: 70, y: 150, w: 30, h: 40, label: "Lápide Antiga", text: "O epitáfio diz: 'Aqui jaz a paz daqueles que confiaram demais'. Um arrepio sobe pela sua espinha..." },
+    { x: 280, y: 180, w: 35, h: 45, label: "Árvore Seca", text: "Folhas mortas caem silenciosamente. O sol poente tinge o céu de um tom vermelho sangue assustador." },
+    { x: 190, y: 190, w: 25, h: 25, label: "Cruzeiro de Pedra", text: "Um grande crucifixo de mármore corroído pelo tempo. Parece que ninguém limpa este pátio há décadas." }
+];
+let activeMessage = "";
+
+let canvas, ctxGame, gameInterval, keys = {}, gameRunning = false;
+let isMobile = false;
+let currentGameType = "";
+
+if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 768)) {
+    isMobile = true;
+}
+
+function initPrologoExplorativo() {
+    audioPart2.init();
+    
+    const container = document.getElementById('game-container');
+    container.style.display = 'flex';
+    document.getElementById('mg-card').style.display = 'none';
+    
+    canvas = document.getElementById('game-canvas');
+    canvas.style.display = 'block';
+    ctxGame = canvas.getContext('2d');
+    
+    prologoRunning = true;
+    keys = {};
+
+    window.addEventListener('keydown', handleKeyDownPart2);
+    window.addEventListener('keyup', handleKeyUpPart2);
+    
+    if (isMobile) setupMobileDPadPart2();
+
+    gameInterval = setInterval(updatePrologo, 1000 / 30);
+    showUndertaleBubble("SUSSURRO DE SANTA MARIA", "Use as setas ou o controle virtual para andar pelo cemitério. Fale com Ricardo (ponto vermelho) no topo da trilha para iniciar o crepúsculo.");
+}
+
+function showUndertaleBubble(name, text) {
+    const ui = document.getElementById('ui');
+    const nameEl = document.getElementById('ui-name');
+    const textEl = document.getElementById('ui-text');
+    const cb = document.getElementById('choice-box');
+    
+    ui.style.display = 'block';
+    ui.style.opacity = '1';
+    nameEl.innerText = name;
+    textEl.innerText = text;
+    cb.innerHTML = "";
+
+    if(prologoRunning) {
+        const b = document.createElement('button');
+        b.className = 'btn-choice'; b.innerText = "Fechar Caixa [X]";
+        b.onclick = () => { ui.style.opacity = '0'; ui.style.display = 'none'; activeMessage = ""; };
+        cb.appendChild(b);
+    }
+}
+
+function updatePrologo() {
+    if (!prologoRunning) return;
+
+    if (keys['arrowup'] || keys['w']) rachel.y -= rachel.speed;
+    if (keys['arrowdown'] || keys['s']) rachel.y += rachel.speed;
+    if (keys['arrowleft'] || keys['a']) rachel.x -= rachel.speed;
+    if (keys['arrowright'] || keys['d']) rachel.x += rachel.speed;
+
+    if(rachel.x < 10) rachel.x = 10; if(rachel.x > canvas.width - 10) rachel.x = canvas.width - 10;
+    if(rachel.y < 10) rachel.y = 10; if(rachel.y > canvas.height - 10) rachel.y = canvas.height - 10;
+
+    propObjects.forEach(obj => {
+        if (rachel.x + rachel.size > obj.x && rachel.x - rachel.size < obj.x + obj.w &&
+            rachel.y + rachel.size > obj.y && rachel.y - rachel.size < obj.y + obj.h) {
+            rachel.y += 4;
+            if(activeMessage !== obj.label) {
+                activeMessage = obj.label;
+                audioPart2.playTone(150, 0.1, 'sine', 0.05);
+                showUndertaleBubble(obj.label, obj.text);
+            }
+        }
+    });
+
+    let dx = rachel.x - ricardoNpc.x;
+    let dy = rachel.y - ricardoNpc.y;
+    let distToRicardo = Math.sqrt(dx*dx + dy*dy);
+
+    if (distToRicardo < 25) {
+        prologoRunning = false;
+        clearInterval(gameInterval);
+        removeMobileDPadEventsPart2();
+        window.removeEventListener('keydown', handleKeyDownPart2);
+        window.removeEventListener('keyup', handleKeyUpPart2);
+        
+        document.getElementById('game-container').style.display = 'none';
+        document.getElementById('ui').style.display = 'block';
+        curId = "p1";
+        renderScenePart2();
+        return;
+    }
+
+    ctxGame.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctxGame.fillStyle = "#080808";
+    ctxGame.fillRect(0,0, canvas.width, canvas.height);
+
+    ctxGame.fillStyle = "#121212";
+    ctxGame.fillRect(140, 0, 100, canvas.height);
+
+    propObjects.forEach(obj => {
+        ctxGame.fillStyle = "#333333"; 
+        ctxGame.fillRect(obj.x, obj.y, obj.w, obj.h);
+        ctxGame.strokeStyle = "#ffffff";
+        ctxGame.strokeRect(obj.x, obj.y, obj.w, obj.h);
+        
+        ctxGame.fillStyle = "#555";
+        ctxGame.fillRect(obj.x + obj.w/2 - 2, obj.y + 8, 4, 20);
+        ctxGame.fillRect(obj.x + obj.w/2 - 8, obj.y + 13, 16, 4);
+    });
+
+    ctxGame.shadowBlur = 8; ctxGame.shadowColor = "#ff0000";
+    ctxGame.fillStyle = "#ff3333";
+    ctxGame.beginPath();
+    ctxGame.arc(ricardoNpc.x, ricardoNpc.y, ricardoNpc.size, 0, Math.PI*2);
+    ctxGame.fill();
+
+    ctxGame.shadowBlur = 0;
+    ctxGame.fillStyle = "#222";
+    ctxGame.fillRect(150, 5, 80, 20);
+
+    ctxGame.shadowBlur = 12; ctxGame.shadowColor = "#fff";
+    ctxGame.fillStyle = "#ffffff";
+    ctxGame.beginPath();
+    ctxGame.arc(rachel.x, rachel.y, rachel.size, 0, Math.PI*2);
+    ctxGame.fill();
+    ctxGame.shadowBlur = 0;
+}
+
+function renderScenePart2() {
+    const node = story[curId];
+    const bg = document.getElementById('scene-bg');
+    const ui = document.getElementById('ui');
+
+    ui.style.opacity = '0'; bg.style.opacity = '0';
+    bg.style.filter = 'blur(15px)'; bg.style.transform = 'scale(1.1)';
+
+    setTimeout(() => {
+        if (node.end) {
+            audioPart2.stopAll();
+            document.getElementById('end').style.display = 'flex';
+            document.getElementById('end-title').innerText = node.title;
+            document.getElementById('end-desc').innerText = node.desc;
+            bg.style.backgroundImage = `url(${node.img})`;
+            bg.style.opacity = '0.5'; bg.style.filter = 'blur(3px)';
+            
+            if(node.type === "death") audioPart2.playTone(45, 5, 'sawtooth', 0.25); 
+            else audioPart2.playTone(220, 2, 'sine', 0.1);
+            return;
+        }
+
+        bg.style.backgroundImage = `url(${node.img})`;
+        document.getElementById('ui-name').innerText = node.name;
+        bg.style.opacity = '0.7'; bg.style.filter = 'blur(0px)'; bg.style.transform = 'scale(1.0)';
+        
+        setTimeout(() => {
+            ui.style.opacity = '1';
+            typeTextPart2(node.text, node.minigame);
+        }, 1000);
+    }, 1200); 
+}
+
+async function typeTextPart2(t, minigame) {
+    typing = true;
+    const el = document.getElementById('ui-text');
+    const cb = document.getElementById('choice-box');
+    const ind = document.getElementById('ui-indicator');
+    el.textContent = ""; cb.innerHTML = "";
+    if (ind) ind.classList.remove('show');
+    
+    for (let i = 0; i < t.length; i++) {
+        el.textContent += t[i];
+        if(i % 4 === 0) audioPart2.playTone(180, 0.04, 'sine', 0.015); 
+        await new Promise(r => setTimeout(r, 45));
+    }
+    typing = false;
+    if (ind) ind.classList.add('show');
+
+    if (minigame) {
+        const b = document.createElement('button');
+        b.className = 'btn-choice'; b.innerText = "SITUAÇÃO DE RISCO!";
+        b.style.borderColor = "var(--accent-orange)";
+        b.onclick = () => { setupGameBoxPart2(minigame); };
+        cb.appendChild(b);
+    } else {
+        story[curId].next.forEach(o => {
+            const b = document.createElement('button');
+            b.className = 'btn-choice'; b.innerText = o.t;
+            b.onclick = () => { if(!typing) { curId = o.n; renderScenePart2(); } };
+            cb.appendChild(b);
+        });
+    }
+}
+
+function setupGameBoxPart2(type) {
+    currentGameType = type;
+    document.getElementById('ui').style.display = 'none';
+    const container = document.getElementById('game-container');
+    container.style.display = 'flex';
+    
+    const card = document.getElementById('mg-card');
+    const title = document.getElementById('mg-title');
+    const desc = document.getElementById('mg-desc');
+    const goBtn = document.getElementById('mg-go-btn');
+    
+    card.style.display = "block"; goBtn.style.display = "inline-block";
+    document.getElementById('game-canvas').style.display = "none";
+    document.getElementById('mobile-controls').style.display = "none";
+
+    if (type === 'labirinto') {
+        title.innerText = "MINIGAME: ESCAPE DA TUMBA";
+        desc.innerText = isMobile 
+            ? "Você está presa! Guie a bolinha BRANCA até a SAÍDA LARANJA usando o controle virtual. Ricardo (ponto vermelho) vai te caçar de forma implacável!"
+            : "Você está presa! Guie a bolinha BRANCA até a SAÍDA LARANJA usando as SETAS ou WASD. Ricardo (ponto vermelho) vai te perseguir!";
+    } else if (type === 'portao') {
+        title.innerText = "MINIGAME: O CADEADO EMPERRADO";
+        desc.innerText = isMobile
+            ? "Abra o portão! Toque na tela (na área do Canvas) exatamente quando a barra branca estiver em cima da zona laranja. Acerte 3 vezes!"
+            : "Abra o portão! Pressione ESPAÇO ou CLIQUE exatamente quando a barra branca estiver em cima da zona laranja. Acerte 3 vezes!";
+    }
+
+    goBtn.onclick = () => {
+        card.style.display = "none";
+        startCountdownPart2(type);
+    };
+}
+
+function startCountdownPart2(type) {
+    const countEl = document.getElementById('countdown-overlay');
+    countEl.style.display = "block";
+    let counter = 3; countEl.innerText = counter;
+    audioPart2.playTone(300, 0.1, 'sine', 0.2);
+
+    let cdInterval = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+            countEl.innerText = counter; audioPart2.playTone(300, 0.1, 'sine', 0.2);
+        } else if (counter === 0) {
+            countEl.innerText = "FUJA!"; audioPart2.playTone(600, 0.3, 'triangle', 0.2);
+        } else {
+            clearInterval(cdInterval); countEl.style.display = "none";
+            runActualMinigamePart2(type);
+        }
+    }, 1000);
+}
+
+function runActualMinigamePart2(type) {
+    canvas = document.getElementById('game-canvas');
+    canvas.style.display = "block";
+    ctxGame = canvas.getContext('2d');
+    gameRunning = true; keys = {};
+
+    if (isMobile) setupMobileDPadPart2();
+
+    if (type === 'labirinto') {
+        initLabirinto();
+    } else if (type === 'portao') {
+        initPortao();
+    }
+}
+
+function endMinigamePart2(success) {
+    gameRunning = false;
+    clearInterval(gameInterval);
+    removeMobileDPadEventsPart2();
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('ui').style.display = 'block';
+    
+    if (success) {
+        curId = (currentGameType === 'labirinto') ? "pos_labirinto" : "sobrevive";
+    } else {
+        curId = "morte";
+    }
+    renderScenePart2();
+}
+
+function setupMobileDPadPart2() {
+    document.getElementById('mobile-controls').style.display = "flex";
+    const mapBtn = (id, keyName) => {
+        const btn = document.getElementById(id);
+        btn.ontouchstart = (e) => { e.preventDefault(); keys[keyName] = true; };
+        btn.ontouchend = (e) => { e.preventDefault(); keys[keyName] = false; };
+    };
+    mapBtn('btn-up', 'arrowup'); mapBtn('btn-down', 'arrowdown');
+    mapBtn('btn-left', 'arrowleft'); mapBtn('btn-right', 'arrowright');
+}
+
+function removeMobileDPadEventsPart2() {
+    ['btn-up', 'btn-down', 'btn-left', 'btn-right'].forEach(id => {
+        const btn = document.getElementById(id);
+        if(btn) { btn.ontouchstart = null; btn.ontouchend = null; }
+    });
+}
+
+function handleKeyDownPart2(e) { keys[e.key.toLowerCase()] = true; }
+function handleKeyUpPart2(e) { keys[e.key.toLowerCase()] = false; }
+
+// --- LÓGICA DO LABIRINTO (PARTE 2) ---
+let player, enemy, maze, mazeSize, cellSize, mazeFog, mazeProximity = 0;
+function initLabirinto() {
+    mazeSize = 13; cellSize = canvas.width / mazeSize;
+    maze = [
+        [1,1,1,1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,1,0,0,0,0,0,1], [1,0,1,1,1,0,1,0,1,1,1,0,1],
+        [1,0,1,0,0,0,0,0,0,0,1,0,1], [1,0,1,0,1,1,1,1,1,0,1,0,1], [1,0,0,0,1,0,0,0,1,0,0,0,1],
+        [1,1,1,0,1,0,1,0,1,0,1,1,1], [1,0,0,0,0,0,1,0,0,0,0,0,1], [1,0,1,1,1,1,1,1,1,1,1,0,1],
+        [1,0,1,0,0,0,0,0,0,0,1,0,1], [1,0,1,0,1,1,0,1,1,0,1,0,1], [1,0,0,0,1,0,0,0,1,0,0,2,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+    player = { x: 1, y: 1, speed: 0.16 }; enemy = { x: 11, y: 1, speed: 0.045 };
+    mazeFog = document.createElement('canvas');
+    mazeFog.width = canvas.width; mazeFog.height = canvas.height;
+    mazeProximity = 0;
+    window.addEventListener('keydown', handleKeyDownPart2); 
+    window.addEventListener('keyup', handleKeyUpPart2);
+    gameInterval = setInterval(updateLabirinto, 1000 / 30);
+}
+
+function updateLabirinto() {
+    if (!gameRunning) return;
+    let nextX = player.x; let nextY = player.y;
+
+    if (keys['arrowup'] || keys['w']) nextY -= player.speed;
+    if (keys['arrowdown'] || keys['s']) nextY += player.speed;
+    if (keys['arrowleft'] || keys['a']) nextX -= player.speed;
+    if (keys['arrowright'] || keys['d']) nextX += player.speed;
+
+    if (checkCollisionPart2(nextX, player.y)) player.x = nextX;
+    if (checkCollisionPart2(player.x, nextY)) player.y = nextY;
+
+    let dx = player.x - enemy.x; let dy = player.y - enemy.y; let dist = Math.sqrt(dx*dx + dy*dy);
+    if (player.x > 8 && player.y > 8) enemy.speed = 0.082;
+
+    if (dist > 0.1) {
+        let moveX = enemy.x + (dx / dist) * enemy.speed; let moveY = enemy.y + (dy / dist) * enemy.speed;
+        if (checkCollisionPart2(moveX, enemy.y)) enemy.x = moveX;
+        if (checkCollisionPart2(enemy.x, moveY)) enemy.y = moveY;
+    }
+
+    let pCellX = Math.floor(player.x + 0.5); let pCellY = Math.floor(player.y + 0.5);
+    if (maze[pCellY] && maze[pCellY][pCellX] === 2) { cleanupLabirinto(); endMinigamePart2(true); return; }
+    if (Math.abs(player.x - enemy.x) < 0.4 && Math.abs(player.y - enemy.y) < 0.4) { cleanupLabirinto(); endMinigamePart2(false); return; }
+
+    // Proximidade de Ricardo (para tensão visual)
+    let targetProx = Math.max(0, 1 - dist / 4.5);
+    mazeProximity += (targetProx - mazeProximity) * 0.2;
+
+    let t = performance.now();
+    let pcx = player.x * cellSize + cellSize/2;
+    let pcy = player.y * cellSize + cellSize/2;
+    let ecx = enemy.x * cellSize + cellSize/2;
+    let ecy = enemy.y * cellSize + cellSize/2;
+    let exitC = 11, exitR = 11;
+    let xcx = exitC * cellSize + cellSize/2;
+    let xcy = exitR * cellSize + cellSize/2;
+
+    // --- CHÃO ---
+    ctxGame.clearRect(0, 0, canvas.width, canvas.height);
+    ctxGame.fillStyle = '#0b0908';
+    ctxGame.fillRect(0, 0, canvas.width, canvas.height);
+
+    // --- PAREDES E PISO ---
+    for (let r = 0; r < mazeSize; r++) {
+        for (let c = 0; c < mazeSize; c++) {
+            let x = c * cellSize, y = r * cellSize;
+            if (maze[r][c] === 1) {
+                let g = ctxGame.createLinearGradient(x, y, x, y + cellSize);
+                g.addColorStop(0, '#2a2622'); g.addColorStop(1, '#13110f');
+                ctxGame.fillStyle = g; ctxGame.fillRect(x, y, cellSize, cellSize);
+                ctxGame.strokeStyle = 'rgba(0,0,0,0.5)'; ctxGame.lineWidth = 1;
+                ctxGame.strokeRect(x + 0.5, y + 0.5, cellSize - 1, cellSize - 1);
+                ctxGame.fillStyle = 'rgba(255,255,255,0.04)';
+                ctxGame.fillRect(x, y, cellSize, 2);
+            } else {
+                ctxGame.fillStyle = ((r + c) % 2 === 0) ? '#161210' : '#120f0d';
+                ctxGame.fillRect(x, y, cellSize, cellSize);
+            }
+        }
+    }
+
+    // --- SAÍDA (brilho pulsante) ---
+    let exitPulse = 0.6 + Math.sin(t * 0.006) * 0.4;
+    ctxGame.save();
+    let exg = ctxGame.createRadialGradient(xcx, xcy, 2, xcx, xcy, cellSize * 1.6);
+    exg.addColorStop(0, `rgba(255,170,70,${0.55 * exitPulse})`);
+    exg.addColorStop(1, 'rgba(255,126,51,0)');
+    ctxGame.fillStyle = exg;
+    ctxGame.fillRect(xcx - cellSize*1.6, xcy - cellSize*1.6, cellSize*3.2, cellSize*3.2);
+    ctxGame.fillStyle = '#ff7e33';
+    ctxGame.shadowBlur = 18; ctxGame.shadowColor = '#ff9a4d';
+    ctxGame.fillRect(exitC * cellSize + 3, exitR * cellSize + 3, cellSize - 6, cellSize - 6);
+    ctxGame.restore();
+
+    // --- INIMIGO (Ricardo): vulto pulsante ---
+    ctxGame.save();
+    let enemyPulse = 0.7 + Math.sin(t * 0.02) * 0.3;
+    ctxGame.shadowBlur = 16 + mazeProximity * 18; ctxGame.shadowColor = '#ff1a1a';
+    let eg = ctxGame.createRadialGradient(ecx, ecy, 1, ecx, ecy, cellSize * 0.55);
+    eg.addColorStop(0, '#ff5252'); eg.addColorStop(1, '#7f0d0d');
+    ctxGame.fillStyle = eg;
+    ctxGame.globalAlpha = enemyPulse;
+    ctxGame.beginPath(); ctxGame.arc(ecx, ecy, cellSize/2.6, 0, Math.PI*2); ctxGame.fill();
+    ctxGame.restore();
+
+    // --- JOGADORA (Raquel) ---
+    ctxGame.save();
+    ctxGame.shadowBlur = 16; ctxGame.shadowColor = '#cdb4ff';
+    let pg = ctxGame.createRadialGradient(pcx, pcy, 1, pcx, pcy, cellSize * 0.5);
+    pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#c4b5fd');
+    ctxGame.fillStyle = pg;
+    ctxGame.beginPath(); ctxGame.arc(pcx, pcy, cellSize/3, 0, Math.PI*2); ctxGame.fill();
+    ctxGame.restore();
+
+    // --- NÉVOA DE GUERRA / LANTERNA ---
+    let fctx = mazeFog.getContext('2d');
+    fctx.clearRect(0, 0, mazeFog.width, mazeFog.height);
+    fctx.fillStyle = 'rgba(2,2,4,0.93)';
+    fctx.fillRect(0, 0, mazeFog.width, mazeFog.height);
+    fctx.globalCompositeOperation = 'destination-out';
+    // Halo da lanterna em volta da Raquel
+    let lightR = cellSize * 3.1;
+    let lg = fctx.createRadialGradient(pcx, pcy, cellSize * 0.5, pcx, pcy, lightR);
+    lg.addColorStop(0, 'rgba(255,255,255,1)');
+    lg.addColorStop(0.7, 'rgba(255,255,255,0.55)');
+    lg.addColorStop(1, 'rgba(255,255,255,0)');
+    fctx.fillStyle = lg;
+    fctx.beginPath(); fctx.arc(pcx, pcy, lightR, 0, Math.PI*2); fctx.fill();
+    // A saída emite sua própria luz fraca através da névoa
+    let xlR = cellSize * 1.7 * exitPulse;
+    let xlg = fctx.createRadialGradient(xcx, xcy, 1, xcx, xcy, xlR);
+    xlg.addColorStop(0, 'rgba(255,255,255,0.85)');
+    xlg.addColorStop(1, 'rgba(255,255,255,0)');
+    fctx.fillStyle = xlg;
+    fctx.beginPath(); fctx.arc(xcx, xcy, xlR, 0, Math.PI*2); fctx.fill();
+    fctx.globalCompositeOperation = 'source-over';
+    ctxGame.drawImage(mazeFog, 0, 0);
+
+    // --- VINHETA VERMELHA DE PROXIMIDADE ---
+    if (mazeProximity > 0.05) {
+        let pv = ctxGame.createRadialGradient(canvas.width/2, canvas.height/2, canvas.width*0.2, canvas.width/2, canvas.height/2, canvas.width*0.6);
+        pv.addColorStop(0, 'rgba(0,0,0,0)');
+        pv.addColorStop(1, `rgba(120,0,0,${mazeProximity * 0.6})`);
+        ctxGame.fillStyle = pv; ctxGame.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // --- HUD ---
+    ctxGame.fillStyle = mazeProximity > 0.5 ? '#ff6b6b' : 'rgba(216,180,254,0.85)';
+    ctxGame.font = "16px 'Special Elite'"; ctxGame.textAlign = 'center';
+    ctxGame.fillText(mazeProximity > 0.6 ? 'ELE ESTÁ PERTO!' : 'ENCONTRE A SAÍDA', canvas.width/2, 22);
+    ctxGame.shadowBlur = 0;
+}
+
+function checkCollisionPart2(x, y) {
+    let radius = 0.28;
+    let checks = [{x: x - radius, y: y - radius}, {x: x + radius, y: y - radius}, {x: x - radius, y: y + radius}, {x: x + radius, y: y + radius}];
+    for (let p of checks) {
+        let cx = Math.floor(p.x + 0.5); let cy = Math.floor(p.y + 0.5);
+        if (maze[cy] && maze[cy][cx] === 1) return false;
+    }
+    return true;
+}
+
+function cleanupLabirinto() { window.removeEventListener('keydown', handleKeyDownPart2); window.removeEventListener('keyup', handleKeyUpPart2); }
+
+// --- LÓGICA DO PORTÃO (PARTE 2) ---
+let barPos, barDirection, targetMin, targetMax, successes, requiredSuccesses, timeLimit, portaoTimer;
+let portaoStart, portaoFlash = 0, portaoShake = 0, portaoFlashColor = '#ff7e33';
+const PORTAO_TRACK_Y = 250, PORTAO_TRACK_H = 30;
+function initPortao() {
+    barPos = 10; barDirection = 1; targetMin = 150; targetMax = 230; successes = 0; requiredSuccesses = 3; timeLimit = 10;
+    portaoStart = performance.now(); portaoFlash = 0; portaoShake = 0;
+    canvas.onclick = triggerPortaoAction; canvas.ontouchstart = (e) => { e.preventDefault(); triggerPortaoAction(); };
+    window.addEventListener('keydown', handlePortaoKey);
+    gameInterval = setInterval(updatePortao, 1000 / 60);
+    portaoTimer = setTimeout(() => { if(gameRunning) { cleanupPortao(); endMinigamePart2(false); } }, timeLimit * 1000);
+}
+
+function handlePortaoKey(e) { if(e.key === " " || e.code === "Space") { e.preventDefault(); triggerPortaoAction(); } }
+function triggerPortaoAction() {
+    if (!gameRunning) return;
+    if (barPos >= targetMin && barPos <= targetMax) {
+        successes++; audioPart2.playTone(400 + successes*80, 0.08, 'sine', 0.2);
+        portaoFlash = 1; portaoFlashColor = '#4ade80';
+        // Aperta a janela e acelera a cada tranca vencida
+        let mid = (targetMin + targetMax) / 2;
+        let half = Math.max(26, 40 - successes * 6);
+        targetMin = mid - half; targetMax = mid + half;
+        barDirection = (barDirection > 0 ? 1 : -1) * (1 + successes * 0.4); 
+        if (successes >= requiredSuccesses) { cleanupPortao(); endMinigamePart2(true); }
+    } else {
+        if(successes > 0) successes--; audioPart2.playTone(130, 0.25, 'sawtooth', 0.25);
+        portaoFlash = 1; portaoFlashColor = '#f43f5e'; portaoShake = 9;
+    }
+}
+
+function drawPadlock(cx, cy, scale, openAmt) {
+    // openAmt: 0 fechado -> 1 totalmente aberto (arco gira para fora)
+    ctxGame.save();
+    ctxGame.translate(cx, cy);
+    ctxGame.scale(scale, scale);
+    // Arco (shackle)
+    ctxGame.save();
+    ctxGame.translate(-14, -18);
+    ctxGame.rotate(openAmt * -0.9);
+    ctxGame.strokeStyle = '#d4d4d8'; ctxGame.lineWidth = 7; ctxGame.lineCap = 'round';
+    ctxGame.beginPath();
+    ctxGame.arc(14, 0, 13, Math.PI, Math.PI * 2);
+    ctxGame.stroke();
+    ctxGame.strokeStyle = '#71717a'; ctxGame.lineWidth = 3;
+    ctxGame.beginPath(); ctxGame.arc(14, 0, 13, Math.PI, Math.PI * 2); ctxGame.stroke();
+    ctxGame.restore();
+    // Corpo
+    let bg = ctxGame.createLinearGradient(0, -10, 0, 26);
+    bg.addColorStop(0, '#fbbf24'); bg.addColorStop(1, '#b45309');
+    ctxGame.fillStyle = bg;
+    ctxGame.strokeStyle = '#78350f'; ctxGame.lineWidth = 2;
+    roundRectGame(-20, -8, 40, 36, 6);
+    ctxGame.fill(); ctxGame.stroke();
+    // Buraco da chave
+    ctxGame.fillStyle = '#3b1d04';
+    ctxGame.beginPath(); ctxGame.arc(0, 6, 4.5, 0, Math.PI*2); ctxGame.fill();
+    ctxGame.fillRect(-2, 6, 4, 12);
+    ctxGame.restore();
+}
+
+function roundRectGame(x, y, w, h, r) {
+    ctxGame.beginPath();
+    ctxGame.moveTo(x + r, y);
+    ctxGame.arcTo(x + w, y, x + w, y + h, r);
+    ctxGame.arcTo(x + w, y + h, x, y + h, r);
+    ctxGame.arcTo(x, y + h, x, y, r);
+    ctxGame.arcTo(x, y, x + w, y, r);
+    ctxGame.closePath();
+}
+
+function updatePortao() {
+    if (!gameRunning) return;
+    barPos += 5.5 * barDirection;
+    if (barPos > canvas.width - 20 || barPos < 10) barDirection *= -1;
+    if (portaoFlash > 0) portaoFlash = Math.max(0, portaoFlash - 0.06);
+    if (portaoShake > 0) portaoShake = Math.max(0, portaoShake - 0.7);
+
+    let shakeX = (Math.random() - 0.5) * portaoShake;
+    let shakeY = (Math.random() - 0.5) * portaoShake;
+    ctxGame.clearRect(0, 0, canvas.width, canvas.height);
+    ctxGame.fillStyle = '#0a0807'; ctxGame.fillRect(0, 0, canvas.width, canvas.height);
+    ctxGame.save();
+    ctxGame.translate(shakeX, shakeY);
+
+    // Cadeado grande (abre conforme o progresso)
+    drawPadlock(canvas.width/2, 120, 2.2, successes / requiredSuccesses);
+
+    // Trilho
+    let ty = PORTAO_TRACK_Y, th = PORTAO_TRACK_H;
+    let tg = ctxGame.createLinearGradient(0, ty, 0, ty + th);
+    tg.addColorStop(0, '#1a1a1a'); tg.addColorStop(1, '#0a0a0a');
+    ctxGame.fillStyle = tg; ctxGame.fillRect(10, ty, canvas.width - 20, th);
+    ctxGame.strokeStyle = '#333'; ctxGame.lineWidth = 1; ctxGame.strokeRect(10, ty, canvas.width - 20, th);
+
+    // Zona-alvo
+    ctxGame.save();
+    ctxGame.shadowBlur = 14; ctxGame.shadowColor = '#ff7e33';
+    let zg = ctxGame.createLinearGradient(0, ty, 0, ty + th);
+    zg.addColorStop(0, 'rgba(255,160,80,0.65)'); zg.addColorStop(1, 'rgba(255,126,51,0.35)');
+    ctxGame.fillStyle = zg; ctxGame.fillRect(targetMin, ty, targetMax - targetMin, th);
+    ctxGame.strokeStyle = '#ff7e33'; ctxGame.lineWidth = 2; ctxGame.strokeRect(targetMin, ty, targetMax - targetMin, th);
+    ctxGame.restore();
+
+    // Agulha / gazua
+    ctxGame.save();
+    ctxGame.shadowBlur = 10; ctxGame.shadowColor = '#fff';
+    ctxGame.fillStyle = '#ffffff'; ctxGame.fillRect(barPos, ty - 12, 6, th + 24);
+    ctxGame.beginPath();
+    ctxGame.moveTo(barPos - 4, ty - 12); ctxGame.lineTo(barPos + 10, ty - 12); ctxGame.lineTo(barPos + 3, ty - 20);
+    ctxGame.closePath(); ctxGame.fill();
+    ctxGame.restore();
+
+    // Progresso (trancas)
+    for (let i = 0; i < requiredSuccesses; i++) {
+        ctxGame.fillStyle = i < successes ? '#4ade80' : '#3f3f46';
+        ctxGame.beginPath(); ctxGame.arc(canvas.width/2 - (requiredSuccesses-1)*11 + i*22, ty + th + 26, 6, 0, Math.PI*2); ctxGame.fill();
+    }
+
+    // Barra de tempo
+    let elapsed = (performance.now() - portaoStart) / 1000;
+    let remain = Math.max(0, 1 - elapsed / timeLimit);
+    ctxGame.fillStyle = '#222'; ctxGame.fillRect(40, ty + th + 48, canvas.width - 80, 7);
+    ctxGame.fillStyle = remain < 0.3 ? '#f43f5e' : '#a855f7';
+    ctxGame.fillRect(40, ty + th + 48, (canvas.width - 80) * remain, 7);
+
+    // Texto
+    ctxGame.fillStyle = '#e5e5e5'; ctxGame.font = "16px 'Special Elite'"; ctxGame.textAlign = 'center';
+    ctxGame.fillText('FORCE O CADEADO', canvas.width/2, 32);
+    ctxGame.restore();
+
+    // Flash de feedback
+    if (portaoFlash > 0) {
+        ctxGame.globalAlpha = portaoFlash * 0.35;
+        ctxGame.fillStyle = portaoFlashColor;
+        ctxGame.fillRect(0, 0, canvas.width, canvas.height);
+        ctxGame.globalAlpha = 1;
+    }
+}
+
+function cleanupPortao() { clearTimeout(portaoTimer); window.removeEventListener('keydown', handlePortaoKey); canvas.onclick = null; canvas.ontouchstart = null; }
+</script>
+</body>
+</html>
