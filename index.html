@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMPACTO SOCIAL | 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    
+    <style>
+        :root {
+            --bg: #050000; /* Um preto levemente avermelhado */
+            --accent: #ff0000;
+            --accent-glow: rgba(255, 0, 0, 0.15);
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-bg: rgba(10, 10, 10, 0.8);
+            --border: #1a1a1a;
+            --transition: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body { 
+            background-color: var(--bg);
+            /* FADES VERMELHOS DISCRETOS NO FUNDO */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 50%, rgba(180, 0, 0, 0.05) 0%, transparent 35%),
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 0, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Removido os pseudo-elementos antigos para usar o gradiente dinâmico do body */
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; }
+
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header span { 
+            font-family: 'Syncopate'; font-size: 0.8rem; letter-spacing: 0.5em; 
+            color: var(--accent); margin-bottom: 20px; text-shadow: 0 0 10px var(--accent);
+        }
+
+        h1 { 
+            font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: -0.04em; 
+            line-height: 1; margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .counter-box {
+            background: rgba(255, 0, 0, 0.03);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            margin-bottom: 40px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .counter-number {
+            font-family: 'Syncopate'; font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--accent); display: block; 
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .btn-main {
+            background: transparent; color: var(--text-main); padding: 18px 40px;
+            font-weight: 700; text-transform: uppercase; font-size: 0.75rem;
+            letter-spacing: 2px; border: 1px solid var(--text-main);
+            cursor: pointer; transition: 0.4s var(--transition);
+        }
+
+        .btn-main:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
+
+        section { padding: 80px 0; }
+        .section-label { font-family: 'Syncopate'; font-size: 0.7rem; color: var(--accent); margin-bottom: 40px; display: block; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-menu { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        
+        .tab-btn {
+            background: transparent; border: 1px solid var(--border);
+            padding: 15px; text-align: left; cursor: pointer; transition: 0.2s;
+            color: var(--text-dim);
+        }
+
+        .tab-btn.active { border-left: 4px solid var(--accent); background: rgba(255,255,255,0.02); color: #fff; }
+        .tab-btn h4 { font-size: 0.8rem; text-transform: uppercase; }
+
+        .chart-container { position: relative; min-height: 350px; width: 100%; }
+
+        .quiz-box {
+            background: var(--card-bg); padding: 40px;
+            border: 1px solid var(--border); position: relative; overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        #timer-bar {
+            position: absolute; top: 0; left: 0; height: 4px;
+            background: var(--accent); width: 100%; transition: width 1s linear;
+        }
+
+        .opt-btn {
+            display: block; width: 100%; padding: 18px;
+            background: rgba(10, 10, 10, 0.8); border: 1px solid var(--border);
+            color: white; text-align: left; margin-bottom: 10px;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        .opt-btn:hover { border-color: var(--accent); transform: translateX(10px); background: rgba(255,0,0,0.05); }
+        .correct { background: #00ff8822 !important; border-color: #00ff88 !important; }
+        .wrong { background: #ff000022 !important; border-color: #ff0000 !important; }
+
+        footer { padding: 60px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); }
+
+        .info-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .interactive-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #1a1a1a;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .interactive-card:hover {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1);
+        }
+
+        .interactive-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff0000;
+            transition: width 0.5s ease;
+        }
+
+        .interactive-card:hover::after { width: 100%; }
+
+        .interactive-card h3 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.8rem;
+            color: #ff0000;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .interactive-card p {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+
+        .interactive-card:hover p { color: #ffffff; }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+            footer div:last-child { text-align: center; }
+        }
+    /* =============================
+   GLOW DINÂMICO GLOBAL
+============================= */
+
+#bg-glow{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    background:
+        radial-gradient(
+            circle 320px at var(--x,50%) var(--y,50%),
+            rgba(255,0,0,0.12),
+            transparent 60%
+        );
+    transition:background .08s linear;
+}
+    /* =============================
+   BOTÃO MAGNÉTICO SUAVE
+============================= */
+
+.btn-main{
+    position:relative;
+    overflow:hidden;
+}
+
+.btn-main::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:120%;
+    height:100%;
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,.25),
+        transparent
+    );
+    transition:.6s;
+}
+
+.btn-main:hover::after{
+    left:120%;
+}
+
+
+/* =============================
+   CARDS 3D LEVE
+============================= */
+
+.interactive-card{
+    transform-style:preserve-3d;
+    will-change:transform;
+}
+    #creditos {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 0, 0, 0.98); /* Quase preto sólido */
+    color: white;
+    display: none;
+    overflow: hidden;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+}
+
+.fechar-creditos {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 10px 20px;
+    font-family: 'Syncopate';
+    font-size: 0.7rem;
+    cursor: pointer;
+    z-index: 10001;
+    transition: 0.3s;
+}
+
+.fechar-creditos:hover {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px var(--accent);
+}
+
+.creditos-conteudo {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 100%; /* Começa fora da tela embaixo */
+}
+
+/* Animação de subida suave */
+.animar-subida {
+    animation: subir-creditos 30s linear forwards;
+}
+
+.creditos-conteudo h1 {
+    font-family: 'Syncopate';
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin: 20px 0 60px 0;
+    letter-spacing: 15px;
+    color: #fff;
+}
+
+.creditos-secao {
+    margin-bottom: 60px;
+}
+
+.creditos-secao h2 {
+    font-family: 'Syncopate';
+    color: var(--accent);
+    font-size: 1rem;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.creditos-secao p {
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin: 10px 0;
+    letter-spacing: 2px;
+}
+
+.creditos-final {
+    margin-top: 100px;
+    padding-bottom: 100px;
+    font-family: 'Syncopate';
+    font-size: 0.8rem;
+}
+
+@keyframes subir-creditos {
+    from { top: 100%; }
+    to { top: -150%; } /* Ajuste aqui dependendo do tamanho do seu texto */
+}
+
+    </style>
+</head>
+<body>
+   
+<div id="bg-glow"></div>
+    <div class="container">
+        <header>
+            <span class="reveal">PROJETO CONSCIENTIZAÇÃO • 2026</span>
+            <h1 class="reveal">CONTRA A <br>VIOLÊNCIA FÍSICA</h1>
+            
+            <div class="counter-box reveal">
+                <p style="font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 10px; color: var(--text-dim);">ESTIMATIVA DE FEMINICÍDIOS EM 2026</p>
+                <span id="fem-counter" class="counter-number">--</span>
+                <p id="timer-label" style="font-size: 0.6rem; color: var(--text-dim); margin-top: 10px;">PRÓXIMO REGISTRO EM: 02:00</p>
+            </div>
+
+            <button class="btn-main reveal" onclick="document.getElementById('stats').scrollIntoView()">Analisar Dados</button>
+        </header>
+
+        <section id="stats">
+            <span class="section-label reveal">                Dados Dinâmicos</span>
+            <div class="dashboard-grid reveal">
+                
+                <div class="chart-card">
+                    <h4 style="margin-bottom: 10px; font-size: 0.8rem; color: #fff;">TIPOS DE AGRESSÃO FÍSICA</h4>
+                    <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 20px;">Clique ou passe o mouse para expandir os dados.</p>
+                    <div class="chart-container">
+                        <canvas id="pizzaChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="tab-menu">
+                        <button class="tab-btn active" onclick="updateBar(0, this)">
+                            <h4>Evolução Mensal</h4>
+                            <p>Casos por 100 mil mulheres.</p>
+                        </button>
+                        <button class="tab-btn" onclick="updateBar(1, this)">
+                            <h4>Cenário do Crime</h4>
+                            <p>Locais de maior incidência.</p>
+                        </button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="info-section">
+    <style>
+        .info-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .interactive-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #1a1a1a;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+        }
+
+        /* Efeito de brilho ao passar o mouse */
+        .interactive-card:hover {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1);
+        }
+
+        /* Barra de progresso animada no card */
+        .interactive-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff0000;
+            transition: width 0.5s ease;
+        }
+
+        .interactive-card:hover::after {
+            width: 100%;
+        }
+
+        .interactive-card h3 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.8rem;
+            color: #ff0000;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .interactive-card p {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+
+        .interactive-card:hover p {
+            color: #ffffff;
+        }
+
+        /* Animação de entrada (Fade-in Up) */
+        .reveal-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+            .impacto{
+text-align:center;
+padding:120px 20px;
+}
+
+.impacto-grid{
+display:flex;
+gap:40px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:50px;
+}
+
+.count{
+font-size:4rem;
+color:#ff0000;
+font-weight:900;
+}
+    </style>
+<section class="impacto reveal">
+
+<h2>Realidade em números</h2>
+
+<div class="impacto-grid">
+<div><span class="count" data-target="68">0</span>%<p>das agressões ocorrem dentro de casa</p></div>
+<div><span class="count" data-target="2">0</span>min<p>entre casos registrados</p></div>
+<div><span class="count" data-target="72">0</span>%<p>envolvem parceiros ou ex</p></div>
+</div>
+
+</section>
+</section>
+    <div class="info-grid-modern">
+        <div class="interactive-card reveal-card" style="animation-delay: 0.1s;">
+            <h3>CICLO DA VIOLÊNCIA</h3>
+            <p>O abuso não começa físico. Ele evolui da tensão para o incidente e a falsa "lua de mel". Identificar o padrão é o primeiro passo para a ruptura.</p>
+        </div>
+
+        <div class="interactive-card reveal-card" style="animation-delay: 0.2s;">
+            <h3>ISOLAMENTO SOCIAL</h3>
+            <p>Em 2026, 72% dos casos graves ocorrem onde a vítima é afastada de redes de apoio. O silêncio é a ferramenta principal do agressor.</p>
+        </div>
+
+        <div class="interactive-card reveal-card" style="animation-delay: 0.3s;">
+            <h3>CANAL DE DENÚNCIA</h3>
+            <p>O Ligue 180 é gratuito, anônimo e vital. Em 2026, o atendimento foi digitalizado para garantir proteção imediata via GPS em casos críticos.</p>
+        </div>
+    </div>
+</div>
+
+        <section id="conscientizacao" style="background: rgba(255, 0, 0, 0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+        <span class="section-label reveal">PROJETO ESCOLAR • SALA 2 REG 6</span>
+        
+        <div class="dashboard-grid reveal">
+            <div class="chart-card" style="padding: 10px; border-color: rgba(255,0,0,0.5);">
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid var(--accent);">
+                    <iframe 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                        src="https://www.youtube.com/embed/mg92G5wBWus" 
+                        title="Diga não à violência doméstica" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="interactive-card" style="display: flex; flex-direction: column; justify-content: center;">
+                <h3 style="color: var(--accent); font-family: 'Syncopate'; font-size: 0.9rem;">"HOJE EU RECEBI FLORES"</h3>
+                <p style="margin-bottom: 20px; font-style: italic; color: #ccc; font-size: 0.95rem;">
+                    O vídeo narra a progressão silenciosa da violência: o que começa com "flores de desculpa" termina em um funeral. Uma mensagem brutal sobre como o ciclo da agressão não para por conta própria.
+                </p>
+                
+                <h3 style="color: var(--text-main); font-family: 'Syncopate'; font-size: 0.7rem; margin-top: 10px;">NOSSO COMPROMISSO</h3>
+                <p style="font-size: 0.9rem; line-height: 1.8;">
+                    Somos a equipe da <strong>Sala 2 Reg 6</strong> e este projeto escolar nasce da necessidade urgente de conscientização. Nosso objetivo é mostrar que a violência doméstica não é um problema privado, mas um alerta público. <strong>É preciso identificar os sinais e denunciar agora. Não espere que seja tarde demais.</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section>
+            <span class="section-label reveal">Teste de Consciência</span>
+            <div class="quiz-box reveal">
+    <div id="quiz-start" style="text-align: center;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 20px; font-family: 'Syncopate';">MODO DINÂMICA</h2>
+        <p style="color: var(--text-dim); margin-bottom: 30px;">PAINEL DO MEDIADOR • CONTROLE MANUAL</p>
+        <button class="btn-main" onclick="startQuiz()">Abrir Sistema</button>
+    </div>
+
+    <div id="scoreboard" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+        <div style="display: flex; justify-content: space-around; width: 100%;">
+            <div style="text-align: center;">
+                <span style="color: #fff; font-size: 0.7rem; font-family: 'Syncopate';">TIME A</span>
+                <div id="score-a" style="font-size: 2.5rem; color: var(--accent); font-weight: 900;">0</div>
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <button onclick="addPoints('A', 1)" style="background: #222; color: #fff; border: 1px solid #444; padding: 2px 8px;">+1</button>
+                    <button onclick="addPoints('A', -1)" style="background: #222; color: #fff; border: 1px solid #444; padding: 2px 8px;">-1</button>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <span style="color: #fff; font-size: 0.7rem; font-family: 'Syncopate';">TIME B</span>
+                <div id="score-b" style="font-size: 2.5rem; color: #fff; font-weight: 900;">0</div>
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <button onclick="addPoints('B', 1)" style="background: #222; color: #fff; border: 1px solid #444; padding: 2px 8px;">+1</button>
+                    <button onclick="addPoints('B', -1)" style="background: #222; color: #fff; border: 1px solid #444; padding: 2px 8px;">-1</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-active" style="display:none">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <span id="q-count" style="color: var(--accent); font-weight: 700;">PERGUNTA 01/10</span>
+            <select id="current-team" style="background: #000; color: #fff; border: 1px solid var(--accent); padding: 5px; font-size: 0.8rem;">
+                <option value="A">TURNO: TIME A</option>
+                <option value="B">TURNO: TIME B</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 4px;">
+            <label style="font-size: 0.8rem;"><input type="checkbox" id="is-repeated"> Já respondeu (+1)</label>
+            <label style="font-size: 0.8rem; color: #ff4444;" onclick="passTurn()" style="cursor:pointer;">[PASSAR VEZ -2]</label>
+        </div>
+
+        <p id="q-text" style="font-size: 1.1rem; margin-bottom: 20px; font-weight: 700; color: #fff;"></p>
+        <div id="opt-grid"></div>
+        
+        <div style="margin-top: 30px; display: flex; gap: 10px;">
+            <button class="btn-main" style="flex: 1; font-size: 0.6rem; border-color: #444;" onclick="cur--; loadQ();">Voltar Pergunta</button>
+            <button class="btn-main" style="flex: 2; font-size: 0.6rem; background: #fff; color: #000;" onclick="cur++; loadQ();">Próxima Pergunta →</button>
+        </div>
+    </div>
+
+    <div id="quiz-end" style="display:none; text-align: center;">
+        <h2 id="winner-text" style="font-family: 'Syncopate'; font-size: 1.5rem; margin-bottom: 10px;">FIM DA DINÂMICA</h2>
+        <button class="btn-main" onclick="location.reload()">Resetar Sistema</button>
+    </div>
+</div>
+
+        </section>
+<div style="text-align: center; margin-top: 50px;">
+    <button onclick="abrirCreditos()" class="btn-main reveal">
+        <i class="fa-solid fa-film" style="margin-right: 10px;"></i> Ver Créditos
+    </button>
+</div>
+
+<div id="creditos">
+    <button class="fechar-creditos" onclick="fecharCreditos()">&times; FECHAR</button>
+    
+    <div class="creditos-conteudo" id="creditos-scroll">
+    <span style="color: var(--accent); font-family: 'Syncopate'; letter-spacing: 10px;">PROJETO IMPACTO 2026</span>
+    <h1>CRÉDITOS E FONTES</h1>
+
+    <div class="creditos-secao">
+        <h2><i class="fa-solid fa-code"></i> ARQUITETURA E DESENVOLVIMENTO</h2>
+        <p><strong>Kaio Cesar</strong> — Lead Developer & UI Designer</p>
+    </div>
+
+    <div class="creditos-secao">
+        <h2><i class="fa-solid fa-magnifying-glass-chart"></i> ANÁLISE DE DADOS E PESQUISA</h2>
+        <p>Gabriel Moreira</p>
+        <p>Raynan Lucas</p>
+        <p>Hiago Victor</p>
+        <p>Gabriel Egídio</p>
+        <p>Kaio Cesar</p>
+    </div>
+
+    <div class="creditos-secao">
+        <h2><i class="fa-solid fa-chalkboard-user"></i> CORPO DE APRESENTAÇÃO</h2>
+        <p>Guilherme Moreira</p>
+        <p>Charlotte</p>
+        <p>Hiago Victor</p>
+        <p>Júlia</p>
+        <p>Raynan Lucas</p>
+        <p>Gabriel Egídio</p>
+        <p>Kaio Cesar</p>
+    </div>
+
+    <div class="creditos-secao">
+        <h2><i class="fa-solid fa-server"></i> FONTES DE DADOS ESTATÍSTICOS</h2>
+        <p>Fórum Brasileiro de Segurança Pública (FBSP)</p>
+        <p>Monitor da Violência (G1/NEV-USP)</p>
+        <p>Instituto Patrícia Galvão — Dados sobre Violência</p>
+        <p>Ministério das Mulheres — Painel Ligue 180</p>
+        <p>Anuário Brasileiro de Segurança Pública 2024/2025</p>
+    </div>
+
+    <div class="creditos-secao">
+        <h2><i class="fa-solid fa-terminal"></i> STACK TECNOLÓGICA</h2>
+        <p>Gemini 3.0 Flash — Engine Cognitiva</p>
+        <p>Chart.js — Renderização de Dados</p>
+        <p>ScrollReveal — Dinâmica de Interface</p>
+        <p>Font Awesome — Iconografia</p>
+    </div>
+
+    <div class="creditos-final">
+        <p>© 2026 — SISTEMA DE CONSCIENTIZAÇÃO SOCIAL</p>
+        <div style="width: 50px; height: 2px; background: var(--accent); margin: 20px auto;"></div>
+        <p style="font-size: 0.7rem; opacity: 0.5;">PRODUÇÃO ACADÊMICA • v4.0.26</p>
+    </div>
+</div>
+
+
+        <footer>
+            
+            <div style="text-align: right;">
+                <p>© 2026 PROJETO - VIOLENCIA FISICA - 2 REG 6</p>
+                <p style="color: white; font-weight: 700;">DADOS EM TEMPO REAL</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+/* ============================================================
+   1. SISTEMA DE DINÂMICA (QUIZ) - REGRAS: +2, +1, -1, -2
+   ============================================================ */
+
+const questions = [
+    { q: "Qual o intervalo de um feminicídio no mundo em 2026?", a: ["1 hora", "2 minutos", "10 minutos"], c: 1 },
+    { q: "Onde ocorre 68% das agressões físicas contra mulheres?", a: ["Residência", "Rua", "Trabalho"], c: 0 },
+    { q: "Qual o número principal para denúncias no Brasil?", a: ["190", "153", "180"], c: 2 },
+    { q: "A violência psicológica também é considerada crime?", a: ["Não", "Sim", "Só se houver agressão física"], c: 1 },
+    { q: "A cada quanto tempo uma mulher é agredida no Brasil?", a: ["2 segundos", "2 minutos", "2 horas"], c: 0 },
+    { q: "Quem são os principais autores de feminicídios?", a: ["Desconhecidos", "Parceiros ou ex-parceiros", "Ladrões"], c: 1 },
+    { q: "O feminicídio é um crime de qual tipo?", a: ["Comum", "Hediondo", "Culposo"], c: 1 },
+    { q: "Qual a fase do ciclo da violência que precede a agressão?", a: ["Lua de mel", "Aumento da tensão", "Arrependimento"], c: 1 },
+    { q: "A Medida Protetiva serve para:", a: ["Multar o agressor", "Afastar o agressor da vítima", "Prender a vítima"], c: 1 },
+    { q: "Qual o maior fator de subnotificação?", a: ["Falta de leis", "Medo e dependência", "Falta de internet"], c: 1 }
+];
+
+let cur = 0;
+let scoreA = 0;
+let scoreB = 0;
+
+function startQuiz() {
+    document.getElementById('quiz-start').style.display = 'none';
+    document.getElementById('scoreboard').style.display = 'flex';
+    document.getElementById('quiz-active').style.display = 'block';
+    loadQ();
+}
+
+function loadQ() {
+    if(cur < 0) cur = 0;
+    if(cur >= questions.length) {
+        endQuiz();
+        return;
+    }
+    
+    // Reset de estado da pergunta
+    document.getElementById('is-repeated').checked = false;
+    const q = questions[cur];
+    document.getElementById('q-count').innerText = `PERGUNTA ${cur+1}/${questions.length}`;
+    document.getElementById('q-text').innerText = q.q;
+    
+    const grid = document.getElementById('opt-grid');
+    grid.innerHTML = '';
+    
+    q.a.forEach((opt, i) => {
+        const b = document.createElement('button');
+        b.className = 'opt-btn';
+        b.innerText = opt;
+        // O clique apenas sinaliza, quem muda a pergunta é o mediador nos botões inferiores
+        b.onclick = (e) => handleMediatorClick(i, e.target);
+        grid.appendChild(b);
+    });
+}
+
+function handleMediatorClick(idx, element) {
+    const correctIdx = questions[cur].c;
+    const currentTeam = document.getElementById('current-team').value;
+    const isRepeated = document.getElementById('is-repeated').checked;
+
+    // Lógica de Pontuação Solicitada
+    if(idx === correctIdx) {
+        element.classList.add('correct');
+        let points = isRepeated ? 1 : 2; // Pessoa nova +2, Repetida +1
+        addPoints(currentTeam, points);
+    } else {
+        element.classList.add('wrong');
+        document.querySelectorAll('.opt-btn')[correctIdx].classList.add('correct');
+        addPoints(currentTeam, -1); // Errou -1
+    }
+    
+    // Trava os botões para evitar múltiplos cliques na mesma pergunta
+    document.querySelectorAll('.opt-btn').forEach(btn => btn.style.pointerEvents = 'none');
+}
+
+function addPoints(team, pts) {
+    if(team === 'A') {
+        scoreA += pts;
+        document.getElementById('score-a').innerText = scoreA;
+    } else {
+        scoreB += pts;
+        document.getElementById('score-b').innerText = scoreB;
+    }
+}
+
+function passTurn() {
+    const currentTeam = document.getElementById('current-team').value;
+    addPoints(currentTeam, -2); // Passou pro outro time -2
+    // Troca o seletor de time automaticamente
+    document.getElementById('current-team').value = (currentTeam === 'A' ? 'B' : 'A');
+}
+
+function endQuiz() {
+    document.getElementById('quiz-active').style.display = 'none';
+    document.getElementById('quiz-end').style.display = 'block';
+    
+    let vencedor = "";
+    if(scoreA > scoreB) vencedor = "VITÓRIA DO TIME A";
+    else if(scoreB > scoreA) vencedor = "VITÓRIA DO TIME B";
+    else vencedor = "EMPATE TÉCNICO";
+    
+    document.getElementById('winner-text').innerText = vencedor;
+}
+
+/* ============================================================
+   2. FEMINICIDIÔMETRO E CONTADORES ANIMADOS
+   ============================================================ */
+
+const START_2026 = new Date("2026-01-01T00:00:00").getTime();
+const MS_PER_CASE = 120000; 
+
+function updateCounter() {
+    const now = new Date().getTime();
+    const elapsed = now - START_2026;
+    const cases = Math.floor(elapsed / MS_PER_CASE);
+    if(document.getElementById('fem-counter')) {
+        document.getElementById('fem-counter').innerText = cases.toLocaleString();
+    }
+
+    let remaining = MS_PER_CASE - (elapsed % MS_PER_CASE);
+    let m = Math.floor(remaining / 60000);
+    let s = Math.floor((remaining % 60000) / 1000);
+    if(document.getElementById('timer-label')) {
+        document.getElementById('timer-label').innerText = `PRÓXIMO REGISTRO EM: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+}
+setInterval(updateCounter, 1000);
+updateCounter();
+
+// Números que sobem ao rolar a tela (Seção Impacto)
+const counters = document.querySelectorAll(".count");
+const counterObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            const el = entry.target;
+            let start = 0;
+            const end = +el.dataset.target;
+            const update = () => {
+                start += Math.ceil(end/60);
+                if(start >= end) start = end;
+                el.innerText = start;
+                if(start < end) requestAnimationFrame(update);
+            };
+            update();
+            counterObs.unobserve(el);
+        }
+    });
+}, {threshold: .7});
+counters.forEach(c => counterObs.observe(c));
+
+/* ============================================================
+   3. GRÁFICOS (CHART.JS)
+   ============================================================ */
+
+const pizzaCtx = document.getElementById('pizzaChart').getContext('2d');
+new Chart(pizzaCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Violência Física', 'Violência Psicológica', 'Violência Moral', 'Violência Patrimonial', 'Violência Sexual'],
+        datasets: [{
+            data: [50, 25, 15, 5, 5],
+            backgroundColor: ['#ff0000', '#cc0000', '#990000', '#660000', '#330000'],
+            borderWidth: 2,
+            borderColor: '#000',
+            hoverOffset: 30
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#888', font: { size: 11 } } } }
+    }
+});
+
+const barCtx = document.getElementById('barChart').getContext('2d');
+const barDataSets = [
+    { labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'], data: [1.2, 1.4, 1.9, 1.6, 2.1] },
+    { labels: ['Casa', 'Rua', 'Trabalho', 'Outros'], data: [68, 18, 8, 6] }
+];
+
+let barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+        labels: barDataSets[0].labels,
+        datasets: [{ data: barDataSets[0].data, backgroundColor: '#ff0000' }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { 
+            y: { grid: { color: '#1a1a1a' }, ticks: { color: '#666' } },
+            x: { ticks: { color: '#fff' }, grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }
+    }
+});
+
+function updateBar(idx, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    barChart.data.labels = barDataSets[idx].labels;
+    barChart.data.datasets[0].data = barDataSets[idx].data;
+    barChart.update();
+}
+
+/* ============================================================
+   4. INTERATIVIDADE VISUAL (GLOW, 3D, MAGNETIC)
+   ============================================================ */
+
+// Glow que segue o mouse
+document.addEventListener("mousemove", e => {
+    document.documentElement.style.setProperty('--x', e.clientX + 'px');
+    document.documentElement.style.setProperty('--y', e.clientY + 'px');
+});
+
+// Parallax de Fundo
+window.addEventListener("scroll", () => {
+    document.body.style.backgroundPosition = `center ${window.scrollY * 0.15}px`;
+});
+
+// Efeito Magnético em Botões
+document.querySelectorAll(".btn-main").forEach(btn => {
+    btn.addEventListener("mousemove", e => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+    });
+    btn.addEventListener("mouseleave", () => {
+        btn.style.transform = "translate(0,0)";
+    });
+});
+
+// Efeito 3D nos Cards
+document.querySelectorAll(".interactive-card").forEach(card => {
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-10px)`;
+    });
+    card.addEventListener("mouseleave", () => {
+        card.style.transform = "rotateY(0) rotateX(0) translateY(0)";
+    });
+});
+
+/* ============================================================
+   5. CRÉDITOS E ANIMAÇÕES DE SCROLL
+   ============================================================ */
+
+function abrirCreditos() {
+    const painel = document.getElementById("creditos");
+    const conteudo = document.getElementById("creditos-scroll");
+    painel.style.display = "block";
+    conteudo.classList.add("animar-subida");
+}
+
+function fecharCreditos() {
+    const painel = document.getElementById("creditos");
+    const conteudo = document.getElementById("creditos-scroll");
+    painel.style.display = "none";
+    conteudo.classList.remove("animar-subida");
+}
+
+ScrollReveal().reveal('.reveal', { distance: '40px', duration: 800, interval: 80, origin: 'bottom' });
+
+    </script>
+</body>
+</html>
